@@ -6,7 +6,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/Freebies)
 
 find_package(OpenSim REQUIRED)
 include_directories(${OPENSIM_INCLUDE_DIRS} ${SIMTK_INCLUDE_DIRS})
-LINK_DIRECTORIES(${OPENSIM_LIBRARY_DIRS})
+#LINK_DIRECTORIES(${OPENSIM_LIBRARY_DIRS})
  
 
 #----------------------------------------------------
@@ -22,16 +22,7 @@ add_executable(generateLmtMaEvalGridsWithOpenSim
     ${generateLmtMaEvalGridsWithOpenSim_SOURCES}
 )
 
-target_link_libraries(generateLmtMaEvalGridsWithOpenSim
-    osimCommon
-    osimSimulation
-    osimAnalyses
-    osimActuators
-    osimTools
-    SimTKcommon
-    SimTKsimbody
-    SimTKmath
-)
+target_link_libraries(generateLmtMaEvalGridsWithOpenSim ${OPENSIM_LIBRARIES})
 
 #----------------------------------------------------
 
@@ -47,15 +38,15 @@ add_executable(generateLmtGridWithOpenSim
 )
 
 
-target_link_libraries(generateLmtGridWithOpenSim
-    osimCommon
-    osimSimulation
-    osimAnalyses
-    osimActuators
-    osimTools
-    SimTKcommon
-    SimTKsimbody
-    SimTKmath
+target_link_libraries(generateLmtGridWithOpenSim ${OPENSIM_LIBRARIES}
+#    osimCommon
+#    osimSimulation
+#    osimAnalyses
+#    osimActuators
+#    osimTools
+#    SimTKcommon
+#    SimTKsimbody
+#    SimTKmath
 )
 
 #----------------------------------------------------
