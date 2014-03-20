@@ -55,7 +55,7 @@ LmtMaFromOpenSim::LmtMaFromOpenSim(){
     exit(EXIT_FAILURE);
 }
 
-LmtMaFromOpenSim::LmtMaFromOpenSim(const string& osimModelFilename, const vector<string>& dofNames, const vector<string>& musclesNames, const vector< vector<double> >& angleCombinations) {
+LmtMaFromOpenSim::LmtMaFromOpenSim(const string& osimModelFilename, const vector<string>& dofNames, const vector<string>& musclesNames, const vector< vector<double> >& angleCombinations, bool computeMoments) : computeMoments_(computeMoments) {
     osimModel_ = new OpenSim::Model(osimModelFilename);
     SimTK::State& stateMuscleAnalysis = osimModel_->initSystem(); //no idea why I have to do this
     osimModel_->getMultibodySystem().realize(stateMuscleAnalysis, SimTK::Stage::Position); //and this, I guess it is just an initialization
@@ -131,9 +131,9 @@ void LmtMaFromOpenSim::runMuscleAnalysis() {
     muscleTendonLengthAnalysis->setMuscles(muscles);
     muscleTendonLengthAnalysis->setStartTime(startTime_);
     muscleTendonLengthAnalysis->setEndTime(endTime_); 
-    muscleTendonLengthAnalysis->setComputeMoments(false);
-    muscleTendonLengthAnalysis->setPrintResultFiles(false);
-    //muscleTendonLengthAnalysis->setName("test");  
+    muscleTendonLengthAnalysis->setComputeMoments(computeMoments_);
+    muscleTendonLengthAnalysis->setPrintResultFiles(true);
+    //muscleTendonLengthAnalysis->setName("test");
     
     //add analysis to model and update the model state
     osimModel_->addAnalysis(muscleTendonLengthAnalysis);

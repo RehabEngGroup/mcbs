@@ -22,6 +22,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <iostream>
+#include "Spline.h"
 
 //#define DEBUG
 //#define LOG_SPLINE

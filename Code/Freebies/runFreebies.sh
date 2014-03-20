@@ -56,7 +56,8 @@ echo "==================================================="
 echo "           3. generate Lmt and Ma with Splines"
 echo "==================================================="
 
-$PROGRAM_DIRECTORY/generateLmtMaWithSplineCoefficients $DATA_DIRECTORY/computeCoefficients/Output/ $DATA_DIRECTORY/generateLmtMaWithSplineCoefficients/Input/ $DATA_DIRECTORY/generateLmtMaWithSplineCoefficients/Output/
+$PROGRAM_DIRECTORY/generateLmtMaWithSplineCoefficients $DATA_DIRECTORY/computeCoefficients/Output/ 
+cp $DATA_DIRECTORY/generateLmtMaWithSplineCoefficients/Input/ $DATA_DIRECTORY/generateLmtMaWithSplineCoefficients/Output/
 
 
 echo "==================================================="

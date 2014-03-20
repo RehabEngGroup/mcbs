@@ -103,7 +103,7 @@ int main(int argc, const char* argv[]) {
     // NodesData: lmt.in 
    
     string osimModelFilename = inputDir + "/model.osim";
-    LmtMaFromOpenSim lmtGridNodesData(osimModelFilename, cfg.getDofNames(), musclesNames, cfg.getAngleCombinations());
+    LmtMaFromOpenSim lmtGridNodesData(osimModelFilename, cfg.getDofNames(), musclesNames, cfg.getAngleCombinations(), true);
     
     string lmtFilename = outputDir + "/NodesData/lmt.in";
     ofstream lmtFile(lmtFilename.c_str());
@@ -129,12 +129,12 @@ int main(int argc, const char* argv[]) {
     anglesFile.close();
     
     // NodesData: lmt.in 
-    LmtMaFromOpenSim lmtGridBetweenNodesData(osimModelFilename, cfg.getDofNames(), musclesNames, cfg.getBetweenAngleCombinations());
+    LmtMaFromOpenSim lmtGridBetweenNodesData(osimModelFilename, cfg.getDofNames(), musclesNames, cfg.getBetweenAngleCombinations(), true);
     
     lmtFilename = outputDir + "/BetweenNodesData/lmt.in";
     lmtFile.open(lmtFilename.c_str());
     if (!lmtFile.is_open()) {
-        cout << "ERROR: NodesData/lmt.in output file could not be open\n";
+        cout << "ERROR: BetweenNodesData/lmt.in output file could not be open\n";
         exit(EXIT_FAILURE);
     }
     lmtFile << cfg.getNoBetweenAngleCombinations() << endl;

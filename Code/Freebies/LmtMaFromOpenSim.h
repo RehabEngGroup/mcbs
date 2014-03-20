@@ -34,7 +34,7 @@ public:
     LmtMaFromOpenSim();
     LmtMaFromOpenSim(const std::string& osimModelFilename, const std::vector<std::string>& dofNames, 
                      const std::vector<std::string>& musclesNames, 
-                     const std::vector< std::vector<double> >& angleCombinations);
+                     const std::vector< std::vector<double> >& angleCombinations, bool computeMoments=false);
     
     LmtMaFromOpenSim(const LmtMaFromOpenSim& orig);
     ~LmtMaFromOpenSim();
@@ -72,6 +72,7 @@ private:
     std::vector< std::vector < std::vector<double> > > maData_;
     double                             startTime_;
     double                             endTime_;
+    bool                               computeMoments_;
        
 };
 

@@ -1,10 +1,12 @@
-include_directories(
-    ${CMAKE_SOURCE_DIR}/SplineSrc/
-)
- 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/Freebies)
+include_directories(${Spline_INCLUDE_DIRS})
 
-find_package(OpenSim REQUIRED)
+ 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+
+find_package(OpenSim) #which is the minimum required version?
+
+if(OPENSIM_FOUND)
+
 include_directories(${OPENSIM_INCLUDE_DIRS} ${SIMTK_INCLUDE_DIRS})
 #LINK_DIRECTORIES(${OPENSIM_LIBRARY_DIRS})
  
@@ -48,30 +50,31 @@ target_link_libraries(generateLmtGridWithOpenSim ${OPENSIM_LIBRARIES}
 #    SimTKsimbody
 #    SimTKmath
 )
-
+endif()
 #----------------------------------------------------
   
 set(computeCoefficients_SOURCES
     computeCoefficients.cpp
     SplineSet.cpp
-    ../SplineSrc/SplineBasisFunction.cpp
 )
 
 add_executable(computeCoefficients 
     ${computeCoefficients_SOURCES}
 )
+target_link_libraries(computeCoefficients Spline)
 
 #----------------------------------------------------
  
 set(generateLmtMaWithSplineCoefficients_SOURCES
     generateLmtMaWithSplineCoefficients.cpp
     SplineSet.cpp
-    ${CMAKE_SOURCE_DIR}/SplineSrc/SplineBasisFunction.cpp
 )
 
 add_executable(generateLmtMaWithSplineCoefficients
     ${generateLmtMaWithSplineCoefficients_SOURCES}
 )
+
+target_link_libraries(generateLmtMaWithSplineCoefficients Spline)
 
 if(UNIX)
   file(COPY runFreebies.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
