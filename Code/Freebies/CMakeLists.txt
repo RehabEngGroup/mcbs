@@ -73,4 +73,8 @@ add_executable(generateLmtMaWithSplineCoefficients
     ${generateLmtMaWithSplineCoefficients_SOURCES}
 )
 
+if(UNIX)
+  file(COPY runFreebies.sh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+  #maybe there is a more portable destination (CMAKE_RUNTIME_OUTPUT_DIRECTORY ?)
+endif()
 

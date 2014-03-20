@@ -63,7 +63,7 @@ echo "==================================================="
 echo "  4. generate Lmt with OpenSim (ma still missing)"
 echo "==================================================="
 
-$PROGRAM_DIRECTORY/generateLmtMaGridWithOpenSim $DATA_DIRECTORY/generateLmtMaGridWithOpenSim/Input/ $DATA_DIRECTORY/generateLmtMaGridWithOpenSim/Output/
+$PROGRAM_DIRECTORY/generateLmtMaEvalGridsWithOpenSim $DATA_DIRECTORY/generateLmtMaEvalGridsWithOpenSim/Input/ $DATA_DIRECTORY/generateLmtMaEvalGridsWithOpenSim/Output/
 
 
 echo "==============================================================="
