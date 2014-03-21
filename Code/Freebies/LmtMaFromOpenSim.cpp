@@ -170,8 +170,6 @@ void LmtMaFromOpenSim::runMuscleAnalysis() {
         delete[] tempCol;    
     }
     
-    delete muscleTendonLengthAnalysis;
-  
 
     const OpenSim::ArrayPtrs<OpenSim::MuscleAnalysis::StorageCoordinatePair>& myMaArraysOfStorage = muscleTendonLengthAnalysis->getMomentArmStorageArray();
     int numCoordinates = myMaArraysOfStorage.getSize();
@@ -196,7 +194,7 @@ void LmtMaFromOpenSim::runMuscleAnalysis() {
           maData_.push_back(currentCoordinateMomentArm);
         }
       }
-    
+      delete muscleTendonLengthAnalysis;
     
 }
 
