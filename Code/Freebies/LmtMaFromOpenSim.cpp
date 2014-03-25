@@ -184,7 +184,7 @@ void LmtMaFromOpenSim::runMuscleAnalysis() {
           vector< vector< double > > currentCoordinateMomentArm;
           for(int iCol = 0; iCol < osimMusclesNames_.size(); ++iCol){
             double* tempCol = new double[nRows];
-            myMaArraysOfStorage[coordinateIterator]->momentStore->getDataColumn(iCol,tempCol);
+            myMaArraysOfStorage[coordinateIterator]->momentArmStore->getDataColumn(iCol,tempCol);
             vector<double> column;
             for(int k = 0; k < nRows; ++k)
               column.push_back(*(tempCol+k));
