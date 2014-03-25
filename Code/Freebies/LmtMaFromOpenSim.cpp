@@ -69,8 +69,7 @@ LmtMaFromOpenSim::~LmtMaFromOpenSim(){
 }
 
 LmtMaFromOpenSim::LmtMaFromOpenSim(const LmtMaFromOpenSim& orig) {
-    // *this = orig; NON SONO SICURA CHE I costruttori di copia siano fatti decenetemten
-    // in opensim... evitiamo... :)
+    // *this = orig; //not sure about correctness of copy constructors in OpenSim
     cout << "LmtMaFromOpenSim: copy constructor: Should not be here!!!\n";
     exit(EXIT_FAILURE);
 }
@@ -132,7 +131,7 @@ void LmtMaFromOpenSim::runMuscleAnalysis() {
     muscleTendonLengthAnalysis->setStartTime(startTime_);
     muscleTendonLengthAnalysis->setEndTime(endTime_); 
     muscleTendonLengthAnalysis->setComputeMoments(computeMoments_);
-    muscleTendonLengthAnalysis->setPrintResultFiles(true);
+    muscleTendonLengthAnalysis->setPrintResultFiles(false);
     //muscleTendonLengthAnalysis->setName("test");
     
     //add analysis to model and update the model state
@@ -156,6 +155,7 @@ void LmtMaFromOpenSim::runMuscleAnalysis() {
     musclePlotterTool.setStatesFileName("MuscleAnalysis/test");
     musclePlotterTool.run();
     
+    //retrieve lmt values
     OpenSim::Storage* myLmtStorage;
     myLmtStorage = muscleTendonLengthAnalysis->getMuscleTendonLengthStorage();
     int nRows = myLmtStorage->getSize();
@@ -170,31 +170,30 @@ void LmtMaFromOpenSim::runMuscleAnalysis() {
         delete[] tempCol;    
     }
     
-
+    //retrieve ma values
     const OpenSim::ArrayPtrs<OpenSim::MuscleAnalysis::StorageCoordinatePair>& myMaArraysOfStorage = muscleTendonLengthAnalysis->getMomentArmStorageArray();
     int numCoordinates = myMaArraysOfStorage.getSize();
     
     
-    //:MONICA: From here... this is not working
-      for (int coordinateIterator = 0; coordinateIterator < numCoordinates; ++coordinateIterator) {
+    for (int coordinateIterator = 0; coordinateIterator < numCoordinates; ++coordinateIterator) {
         
         string currentCoordinateName = myMaArraysOfStorage[coordinateIterator]->q->getName();
         if ( find(osimDofNames_.begin(), osimDofNames_.end(), currentCoordinateName ) != osimDofNames_.end() ) { 
-          osimCoordinateNames_.push_back(currentCoordinateName);
-          vector< vector< double > > currentCoordinateMomentArm;
-          for(int iCol = 0; iCol < osimMusclesNames_.size(); ++iCol){
-            double* tempCol = new double[nRows];
-            myMaArraysOfStorage[coordinateIterator]->momentArmStore->getDataColumn(iCol,tempCol);
-            vector<double> column;
-            for(int k = 0; k < nRows; ++k)
-              column.push_back(*(tempCol+k));
-            currentCoordinateMomentArm.push_back(column);
-            delete[] tempCol;    
-          }
-          maData_.push_back(currentCoordinateMomentArm);
+            osimCoordinateNames_.push_back(currentCoordinateName);
+            vector< vector< double > > currentCoordinateMomentArm;
+            for(int iCol = 0; iCol < osimMusclesNames_.size(); ++iCol){
+                double* tempCol = new double[nRows];
+                myMaArraysOfStorage[coordinateIterator]->momentArmStore->getDataColumn(iCol,tempCol);
+                vector<double> column;
+                for(int k = 0; k < nRows; ++k)
+                    column.push_back(*(tempCol+k));
+                currentCoordinateMomentArm.push_back(column);
+                delete[] tempCol;
+            }
+            maData_.push_back(currentCoordinateMomentArm);
         }
-      }
-      delete muscleTendonLengthAnalysis;
+    }
+    delete muscleTendonLengthAnalysis;
     
 }
 
