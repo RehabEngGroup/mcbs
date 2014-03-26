@@ -31,23 +31,9 @@ using std::ofstream;
 #include <stdlib.h>
 #include "SplineSet.h"
 #include <math.h>
-
-
-void readMuscles(const string& musclesFilename, vector<string>& musclesNames) {
-    ifstream musclesFile(musclesFilename.c_str());
-    if (!musclesFile) {
-        cout << "Error: file " << musclesFilename << " could not be opened\n";
-        exit(EXIT_FAILURE);
-    }
-    string nextMuscle;
-    musclesFile >> nextMuscle;
-    while (!musclesFile.eof()) {
-        musclesNames.push_back(nextMuscle);
-        musclesFile >> nextMuscle;
-    } 
-    
-    musclesFile.close();
-}
+#include "ReadMuscles.h"
+#include <map>
+using std::map;
 
 
 inline double radians (double d) {
@@ -64,10 +50,9 @@ int main(int argc, const char* argv[]) {
     // Check command line arguments
     if ( argc != 4 ) {
         cout << "Usage: generateLmtMaWithSplineCoefficients coeffDirectory inputDirectory outputDirectory\n";
-        cout << "coeffDirectory:  directory with all the binary files with the coefficients";
-        cout << "inputDirectory: angles.in and muscle.in a file with a list of the angle configurations";
-        cout << "outputDirectory: directory with NodesData/ and BetweenNodesData/ directory\n";
-        cout << "               , output of the generateLmtMaEvalGrids program.\n";
+        cout << "coeffDirectory:  directory with all the binary files with the coefficients\n";
+        cout << "inputDirectory:  directory containing angles.in (list of the angle configurations), muscles.in (list of muscles) and dof.in(list of muscles to consider for each coordinate) files \n";
+        cout << "outputDirectory: directory where lmt and moment arms .out files are saved\n";
         exit(EXIT_FAILURE);
     }
     
@@ -78,39 +63,14 @@ int main(int argc, const char* argv[]) {
     //--------------> read the muscles
     string musclesFilename = inputDir + "/muscles.in"; 
     vector<string> musclesNames;
-    readMuscles(musclesFilename, musclesNames);
+    map<string, vector<string> >musclesConnectedToDofs;
+    readMuscles(musclesFilename, musclesNames, musclesConnectedToDofs);
       
     // and you create the splines
     SplineSet splineSet(coeffDir, musclesNames);
     
     
-    //---->  read the dofs and the muscles connected
-    vector< string > dofsNames;
-    vector< vector< string > > musclesConnectedToDofs;
-    string dofsFileName = inputDir + "/dofs.in";
-    ifstream dofsFile(dofsFileName.c_str());
-    if (!dofsFile.is_open()) {
-      cout << "ERROR: " << dofsFileName << " input file could not be open\n";
-      exit(EXIT_FAILURE);
-    }
-    
-    string line;
-    
-    while(std::getline(dofsFile, line)) {
-      std::istringstream iss(line);
-      string token;
-      iss >> token;
-      dofsNames.push_back(token);
-      
-      vector< string > connectedMuscles;
-      while (iss >> token) {
-        connectedMuscles.push_back(token);  
-      }
-      musclesConnectedToDofs.push_back(connectedMuscles);
-    }
-    
-    
-    
+
     //------>  read the angles
     string anglesFileName = inputDir + "/angles.in";
     ifstream anglesFile(anglesFileName.c_str());
@@ -122,9 +82,10 @@ int main(int argc, const char* argv[]) {
     int noCombinations;
     anglesFile >> noCombinations;
     vector< vector< double > > anglesCombinations; 
+    size_t dofsSize=musclesConnectedToDofs.size();
     for (int i = 0; i < noCombinations; ++i) {
-        vector<double> currentAngleCombination(dofsNames.size());
-        for (int j=dofsNames.size()-1; j>=0; --j) {
+        vector<double> currentAngleCombination(dofsSize);
+        for (int j=dofsSize-1; j>=0; --j) {
             anglesFile >> currentAngleCombination.at(j);
             currentAngleCombination.at(j) = radians(currentAngleCombination.at(j));
         }  
@@ -132,19 +93,10 @@ int main(int argc, const char* argv[]) {
     }
     
     anglesFile.close();
-    
-  /*  for(int i = 0; i < dofsNames.size(); ++i) {
-      cout << dofsNames.at(i) << ": ";
-      for (int j = 0; j < musclesConnectedToDofs.at(i).size(); ++j)
-        cout << musclesConnectedToDofs.at(i).at(j) << " ";
-      cout << endl;
-    }
-    
-   */
 
    
     splineSet.evalLmt(outputDir, anglesCombinations );
-    splineSet.evalMa(outputDir, dofsNames, musclesConnectedToDofs, anglesCombinations  );
+    splineSet.evalMa(outputDir, musclesConnectedToDofs, anglesCombinations  );
     
     exit(EXIT_SUCCESS);
 } 

@@ -33,24 +33,9 @@ using std::ifstream;
 #include <OpenSim/Common/Storage.h>
 
 #include "LmtMaFromOpenSim.h"
-#include "DofCfg.h" 
+#include "DofCfg.h"
+#include "ReadMuscles.h"
 
-
-void readMuscles(const string& musclesFilename, vector<string>& musclesNames) {
-    ifstream musclesFile(musclesFilename.c_str());
-    if (!musclesFile) {
-        cout << "Error: file " << musclesFilename << " could not be opened\n";
-        exit(EXIT_FAILURE);
-    }
-    string nextMuscle;
-    musclesFile >> nextMuscle;
-    while (!musclesFile.eof()) {
-        musclesNames.push_back(nextMuscle);
-        musclesFile >> nextMuscle;
-    } 
-    
-    musclesFile.close();
-}
 
 
 void printAnglesCombinations(ostream &os, vector< vector<double> > combinations) {

@@ -29,34 +29,10 @@ using std::vector;
 using std::ofstream;
 using std::ifstream;
 #include <stdlib.h>
+#include "ReadMuscles.h"
 
 #include "LmtMaFromOpenSim.h"
 #include "DofCfg.h" 
-
-
-/*! Read the muscle names from the provided file
-    \param [in] musclesFilename list the name of the muscles we are interested in
-                the file format is just the list of muscle names (one for each row)
-                Do not use OpenSim muscle names. Use the name required by your applications
-    \param [out] musclesNames a vector with the name of the muscles, ready to be used
-                 in our applications
- 
- */
-void readMuscles(const string& musclesFilename, vector<string>& musclesNames) {
-    ifstream musclesFile(musclesFilename.c_str());
-    if (!musclesFile) {
-        cout << "Error: file " << musclesFilename << " could not be opened\n";
-        exit(EXIT_FAILURE);
-    }
-    string nextMuscle;
-    musclesFile >> nextMuscle;
-    while (!musclesFile.eof()) {
-        musclesNames.push_back(nextMuscle);
-        musclesFile >> nextMuscle;
-    } 
-    
-    musclesFile.close();
-}
 
 
 /*!

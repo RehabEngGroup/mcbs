@@ -24,6 +24,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <map>
 #include "Spline.h"
 #include "DofCfg.h"
 
@@ -44,8 +45,7 @@ public:
                        const std::vector< double >& angleCombinations,
                        std::vector <double>& maValues);
     void evalLmt( const std::string& outputDir, const std::vector< std::vector< double > >& angleCombinations ); 
-    void evalMa(const std::string& outputDir, const std::vector< std::string >& dofsNames, 
-                const std::vector< std::vector< std::string > >& musclesConnectedToDofs, const std::vector< std::vector< double > >& angleCombinations  );
+    void evalMa(const std::string& outputDir, const std::map< std::string, std::vector< std::string > >& musclesConnectedToDofs, const std::vector< std::vector< double > >& angleCombinations  );
   
 private:
     std::vector< Spline<N_DOF> >  splines_;

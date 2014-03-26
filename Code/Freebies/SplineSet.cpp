@@ -37,7 +37,8 @@ using std::find;
 #include <iostream>
 using std::endl;
 #include <iomanip>
-
+#include <map>
+using std::map;
 #include <fstream>
 using std::ifstream;
 using std::ofstream;
@@ -313,7 +314,7 @@ void SplineSet::getMa( const string& dofName,
   
 }
 
-void SplineSet::evalMa(const string& outputDir, const vector<string>& dofsNames, const vector< vector< string > >& musclesConnectedToDofs, const vector< vector< double > >& angleCombinations  ) {
+void SplineSet::evalMa(const string& outputDir, const  map<string, vector<string> >& musclesConnectedToDofs, const vector< vector< double > >& angleCombinations  ) {
   
   
   const int DIGIT_NUM = 8;   
@@ -321,15 +322,17 @@ void SplineSet::evalMa(const string& outputDir, const vector<string>& dofsNames,
   
   
   
-  // for all the degree of freedom
-  for (unsigned int k = 0; k < dofsNames.size() ; ++k) {
-    if ( dofsNames.at(k) != dofNames_.at(k) ) {
-      cout << "ERROR: dofsNames differs\n";
+  // for all the degrees of freedom in the map
+  for ( map<string, vector<string> >::const_iterator musclesIt = musclesConnectedToDofs.begin(); musclesIt!= musclesConnectedToDofs.end() ; ++musclesIt) {
+    vector<string>::iterator dofIt=find(dofNames_.begin(), dofNames_.end(), musclesIt->first);
+    if ( dofIt==dofNames_.end() ) {
+      cout << "ERROR: dofsNames differ\n";
       exit(EXIT_FAILURE);
     }
+    size_t dofIndex=dofIt-dofNames_.begin(); //index for this degree of freedom in our member variables
     
     // Then open the outputDataFile
-    string outputDataFilename = outputDir +  "ma" + dofNames_[k] + ".out";  
+    string outputDataFilename = outputDir +  "ma" + dofNames_[dofIndex] + ".out";
     ofstream outputDataFile(outputDataFilename.c_str()); 
     
     if (!outputDataFile.is_open()) {
@@ -337,21 +340,21 @@ void SplineSet::evalMa(const string& outputDir, const vector<string>& dofsNames,
       exit(EXIT_FAILURE);
     }
 
-    for (unsigned int i = 0; i < musclesConnectedToDofs.at(k).size(); ++i) 
-      outputDataFile << musclesConnectedToDofs.at(k).at(i) << "\t";
+    for (unsigned int i = 0; i < musclesIt->second.size(); ++i)
+      outputDataFile << musclesIt->second.at(i) << "\t";
     outputDataFile << endl;
    
 
     double nextValue;
     for (unsigned int j = 0; j < angleCombinations.size(); ++j) {
-      for (unsigned int i = 0; i < musclesConnectedToDofs.at(k).size(); ++i) {   
-         vector<string>::iterator iter = find(muscleNames_.begin(), muscleNames_.end(), musclesConnectedToDofs.at(k).at(i));
+      for (unsigned int i = 0; i < musclesIt->second.size(); ++i) {
+         vector<string>::iterator iter = find(muscleNames_.begin(), muscleNames_.end(), musclesIt->second.at(i));
          if (iter == muscleNames_.end()) {
            cout << "something went wrong\n";
            exit(EXIT_FAILURE);
          } 
         size_t splineNum = std::distance(muscleNames_.begin(), iter);
-        outputDataFile << std::setprecision(NUMBER_DIGIT_OUTPUT) << std::fixed << -roundIt(splines_[splineNum].getFirstDerivative(angleCombinations.at(j),k), DIGIT_NUM+2) << "\t";
+        outputDataFile << std::setprecision(NUMBER_DIGIT_OUTPUT) << std::fixed << -roundIt(splines_[splineNum].getFirstDerivative(angleCombinations.at(j),dofIndex), DIGIT_NUM+2) << "\t";
           
       } 
       outputDataFile << endl;

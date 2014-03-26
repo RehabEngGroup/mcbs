@@ -15,9 +15,14 @@ include_directories(${OPENSIM_INCLUDE_DIRS} ${SIMTK_INCLUDE_DIRS})
 
 set(generateLmtMaEvalGridsWithOpenSim_SOURCES
     generateLmtMaEvalGridsWithOpenSim.cpp
+    LmtMaFromOpenSim.h
     LmtMaFromOpenSim.cpp
+    OpenSim2StdTools.h
     OpenSim2StdTools.cpp
+    DofCfg.h
     DofCfg.cpp
+    ReadMuscles.h
+    ReadMuscles.cpp
 )
 
 add_executable(generateLmtMaEvalGridsWithOpenSim
@@ -30,9 +35,14 @@ target_link_libraries(generateLmtMaEvalGridsWithOpenSim ${OPENSIM_LIBRARIES})
 
 set(generateLmtGridWithOpenSim_SOURCES
     generateLmtGridWithOpenSim.cpp
+    LmtMaFromOpenSim.h
     LmtMaFromOpenSim.cpp
+    OpenSim2StdTools.h
     OpenSim2StdTools.cpp
+    DofCfg.h
     DofCfg.cpp
+    ReadMuscles.h
+    ReadMuscles.cpp
 )
 
 add_executable(generateLmtGridWithOpenSim
@@ -55,6 +65,7 @@ endif()
   
 set(computeCoefficients_SOURCES
     computeCoefficients.cpp
+    SplineSet.h
     SplineSet.cpp
 )
 
@@ -67,7 +78,10 @@ target_link_libraries(computeCoefficients Spline)
  
 set(generateLmtMaWithSplineCoefficients_SOURCES
     generateLmtMaWithSplineCoefficients.cpp
+    SplineSet.h
     SplineSet.cpp
+    ReadMuscles.h
+    ReadMuscles.cpp
 )
 
 add_executable(generateLmtMaWithSplineCoefficients
