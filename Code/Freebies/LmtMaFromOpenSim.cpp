@@ -217,11 +217,11 @@ void LmtMaFromOpenSim::saveMa(const string& outputDirectory) {
   for (int coordinateIterator = 0; coordinateIterator < osimCoordinateNames_.size(); ++coordinateIterator) {
     // open next ma file
     string maFileName = outputDirectory + "ma" + OpenSim2StdTools::osim2stdDofName(osimCoordinateNames_.at(coordinateIterator)) + ".out"; 
-    cout << maFileName;
+    cout << maFileName << endl;
     ofstream maFile(maFileName.c_str());
     for(int i = 0; i < osimMusclesNames_.size()-1; ++i)
-        maFile << OpenSim2StdTools::osim2stdMuscleName(osimMusclesNames_.at(i)) << " ";
-    // the last one is printed outside the for cycle because we do not want " " at the end of the line
+        maFile << OpenSim2StdTools::osim2stdMuscleName(osimMusclesNames_.at(i)) << "\t";
+    // the last one is printed outside the for cycle because we do not want "\t" at the end of the line
     maFile << OpenSim2StdTools::osim2stdMuscleName(osimMusclesNames_.back()) << endl; 
     int nRows = maData_.at(coordinateIterator).at(1).size();
     int nCols = maData_.at(coordinateIterator).size();
