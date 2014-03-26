@@ -35,6 +35,7 @@ using std::ofstream;
 #include <map>
 using std::map;
 
+#include <algorithm>
 
 inline double radians (double d) {
 return d * M_PI / 180;
@@ -78,23 +79,50 @@ int main(int argc, const char* argv[]) {
         cout << "ERROR: " << anglesFileName << " input file could not be open\n";
         exit(EXIT_FAILURE);
     }
-    
-    int noCombinations;
-    anglesFile >> noCombinations;
-    vector< vector< double > > anglesCombinations; 
-    size_t dofsSize=musclesConnectedToDofs.size();
-    for (int i = 0; i < noCombinations; ++i) {
-        vector<double> currentAngleCombination(dofsSize);
-        for (int j=dofsSize-1; j>=0; --j) {
-            anglesFile >> currentAngleCombination.at(j);
-            currentAngleCombination.at(j) = radians(currentAngleCombination.at(j));
-        }  
-        anglesCombinations.push_back(currentAngleCombination);
+
+    vector< string > dofsNames;
+    string line;
+    std::getline(anglesFile, line);
+    std::istringstream iss(line);
+    string token;
+    //read dof names
+    while(iss >> token)
+       dofsNames.push_back(token);
+
+    vector< string > splineDofsNames=splineSet.getDofNames();
+    //compare dof names provided in angles.in with those used for generate the splines (we must provide our "test" angles
+    //with the same order)
+    vector <int> dofOrder;
+    for( vector <string>::iterator dofIt=dofsNames.begin(); dofIt!=dofsNames.end(); ++dofIt)
+    {
+        vector <string>::iterator foundDof=std::find(splineDofsNames.begin(), splineDofsNames.end(), *dofIt );
+        if (foundDof!=splineDofsNames.end())
+            dofOrder.push_back( foundDof -splineDofsNames.begin() );
+        else
+        {
+            cout << "ERROR: " << *dofIt << " degree of freedom provided in angles.in file was not found in spline degrees of freedom\n";
+            exit(EXIT_FAILURE);
+        }
     }
-    
+
+    //read angle combinations
+    vector< vector< double > > anglesCombinations;
+    double nextValue;
+    while(anglesFile.good()) {
+        bool stillGood=true;
+        vector<double> currentAngleCombination(dofsNames.size());
+        for (int j=0; j<dofsNames.size(); ++j) {
+
+            if (anglesFile>>nextValue)
+                currentAngleCombination.at(dofOrder.at(j)) = radians(nextValue);
+            else stillGood=false;
+        }
+        if (stillGood)
+            anglesCombinations.push_back(currentAngleCombination);
+    }
     anglesFile.close();
 
-   
+
     splineSet.evalLmt(outputDir, anglesCombinations );
     splineSet.evalMa(outputDir, musclesConnectedToDofs, anglesCombinations  );
     

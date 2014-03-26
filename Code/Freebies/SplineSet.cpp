@@ -365,4 +365,9 @@ void SplineSet::evalMa(const string& outputDir, const  map<string, vector<string
   
 }
 
+vector< string > SplineSet::getDofNames()
+{
+  return dofNames_;
+}
+
   

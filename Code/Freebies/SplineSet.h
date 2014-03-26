@@ -38,6 +38,7 @@ public:
     SplineSet(const std::string& inputDataFilename);
     SplineSet(const std::string& coeffDir, const std::vector<std::string>& muscleNames);
     SplineSet(const SplineSet& orig);
+    std::vector<std::string> getDofNames();
     void exportCoefficients(const std::string& outDir);
     void getLmt(std::vector<double>& lmtValues, const std::vector<double>& dofValues);
     void getMa(const std::string& dofName, 
