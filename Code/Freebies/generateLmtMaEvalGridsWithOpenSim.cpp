@@ -29,8 +29,8 @@ using std::vector;
 using std::ofstream;
 using std::ifstream;
 #include <stdlib.h>
-
-#include <OpenSim/Common/Storage.h>
+#include <map>
+using std::map;
 
 #include "LmtMaFromOpenSim.h"
 #include "DofCfg.h"
@@ -38,16 +38,6 @@ using std::ifstream;
 
 
 
-void printAnglesCombinations(ostream &os, vector< vector<double> > combinations) {
-    int nRows = combinations.at(0).size();
-    int nCols = combinations.size();
-    os << nRows << endl;
-    for (int iRow = 0; iRow < nRows; ++iRow) {
-        for (int iCol = 0; iCol < nCols; ++iCol) 
-           os << combinations.at(iCol).at(iRow) << " ";
-        os << endl;
-    }    
-}
  
 // muscles.in (list of the muscles we are interested in
 // model.osim (model for opensim)
@@ -66,75 +56,65 @@ int main(int argc, const char* argv[]) {
     //-- read the muscles we want in the grid
     string musclesFilename = inputDir + "/muscles.in"; 
     vector<string> musclesNames;
-    readMuscles(musclesFilename, musclesNames);
+    map<string, vector<string> > musclesConnectedToDofs;
+    readMuscles(musclesFilename, musclesNames, musclesConnectedToDofs);
+
     
-    //-- create the angles combinations
-    string configFilename = inputDir + "/dofAngles.cfg";
-    DofCfg cfg(configFilename);
-    
-    //-- create the eval files for spline (compute the lmt and ma with opensim) 
-    //   to be compared with the output of spline software
-    
-    // NodesData: angles.in
-    string anglesFileName = outputDir + "/NodesData/angles.in";
-    ofstream anglesFile(anglesFileName.c_str());
+//------>  read the angles
+    string anglesFileName = inputDir + "/angles.in";
+    ifstream anglesFile(anglesFileName.c_str());
     if (!anglesFile.is_open()) {
-        cout << "ERROR: NodesData/angles.in output file could not be open\n";
+        cout << "ERROR: " << anglesFileName << " input file could not be open\n";
         exit(EXIT_FAILURE);
     }
-    printAnglesCombinations(anglesFile, cfg.getAngleCombinations());
+
+    vector< string > dofsNames;
+    string line;
+    std::getline(anglesFile, line);
+    std::istringstream iss(line);
+    string token;
+    //read dof names
+    while(iss >> token)
+       dofsNames.push_back(token);
+
+    //read angle combinations
+    vector< vector< double > > anglesCombinations;
+    double nextValue;
+    while(anglesFile.good()) {
+        bool stillGood=true;
+        vector<double> currentAngleCombination(dofsNames.size());
+        for (int j=0; j<dofsNames.size(); ++j) {
+
+            if (anglesFile>>nextValue)
+                currentAngleCombination.at(j) = nextValue;
+            else stillGood=false;
+        }
+        if (stillGood)
+            anglesCombinations.push_back(currentAngleCombination);
+    }
     anglesFile.close();
     
-    // NodesData: lmt.in 
-   
+    //Monica I hate you: now I have to create a new anglesCombinations where dimensions are swapped
+    vector< vector< double > > anglesCombinationsBySample(anglesCombinations.at(0).size(), vector<double>(anglesCombinations.size()));
+    for(size_t i=0; i< anglesCombinations.size(); ++i)
+        for (size_t j=0; j<anglesCombinations.at(0).size(); ++j)
+            anglesCombinationsBySample.at(j).at(i)=anglesCombinations.at(i).at(j);
+
+    //Monica I hate you again - I have to reverse the order of dofNames
+    std::reverse(dofsNames.begin(),dofsNames.end());
     string osimModelFilename = inputDir + "/model.osim";
-    LmtMaFromOpenSim lmtGridNodesData(osimModelFilename, cfg.getDofNames(), musclesNames, cfg.getAngleCombinations(), true);
+    LmtMaFromOpenSim lmtGridNodesData(osimModelFilename, dofsNames, musclesNames, anglesCombinationsBySample, true);
     
-    string lmtFilename = outputDir + "/NodesData/lmt.in";
+    string lmtFilename = outputDir + "lmt.out";
     ofstream lmtFile(lmtFilename.c_str());
     if (!lmtFile.is_open()) {
-        cout << "ERROR: NodesData/lmt.in output file could not be open\n";
+        cout << "ERROR: lmt.out output file could not be open\n";
         exit(EXIT_FAILURE);
     }
-    lmtFile << cfg.getNoAngleCombinations() << endl;
     lmtGridNodesData.saveLmt(lmtFile);
-    
-    lmtGridNodesData.saveMa(outputDir + "/NodesData/");
-    
+    lmtGridNodesData.saveMa(outputDir, musclesConnectedToDofs);
     lmtFile.close();
-    
-    // BetweeenNodesData: angles.in
-    anglesFileName = outputDir + "/BetweenNodesData/angles.in";
-    anglesFile.open(anglesFileName.c_str());
-    if (!anglesFile.is_open()) {
-        cout << "ERROR: BetweenNodesData/angles.in output file could not be open\n";
-        exit(EXIT_FAILURE);
-    }
-    printAnglesCombinations(anglesFile, cfg.getBetweenAngleCombinations());
-    anglesFile.close();
-    
-    // NodesData: lmt.in 
-    LmtMaFromOpenSim lmtGridBetweenNodesData(osimModelFilename, cfg.getDofNames(), musclesNames, cfg.getBetweenAngleCombinations(), true);
-    
-    lmtFilename = outputDir + "/BetweenNodesData/lmt.in";
-    lmtFile.open(lmtFilename.c_str());
-    if (!lmtFile.is_open()) {
-        cout << "ERROR: BetweenNodesData/lmt.in output file could not be open\n";
-        exit(EXIT_FAILURE);
-    }
-    lmtFile << cfg.getNoBetweenAngleCombinations() << endl;
-    lmtGridBetweenNodesData.saveLmt(lmtFile);
-    
-    
-    // NodesData: ma.in 
-    lmtGridBetweenNodesData.saveMa(outputDir + "/BetweenNodesData/");
-    lmtFile.close();
-    
-     
-    
-    
-    
-    
+
     exit(EXIT_SUCCESS);
   
 }

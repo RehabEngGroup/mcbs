@@ -212,22 +212,35 @@ void LmtMaFromOpenSim::saveLmt(ostream &os) {
     }   
 }
 
-void LmtMaFromOpenSim::saveMa(const string& outputDirectory) {
+void LmtMaFromOpenSim::saveMa(const string& os, std::map< string, vector< string > >& musclesConnectedToDofs) {
   cout << "saving MA" << endl; 
   for (int coordinateIterator = 0; coordinateIterator < osimCoordinateNames_.size(); ++coordinateIterator) {
     // open next ma file
-    string maFileName = outputDirectory + "ma" + OpenSim2StdTools::osim2stdDofName(osimCoordinateNames_.at(coordinateIterator)) + ".out"; 
+    string maFileName = os + "ma" + OpenSim2StdTools::osim2stdDofName(osimCoordinateNames_.at(coordinateIterator)) + ".out"; 
     cout << maFileName << endl;
     ofstream maFile(maFileName.c_str());
-    for(int i = 0; i < osimMusclesNames_.size()-1; ++i)
-        maFile << OpenSim2StdTools::osim2stdMuscleName(osimMusclesNames_.at(i)) << "\t";
+    vector<string>& musclesToConsider=musclesConnectedToDofs[OpenSim2StdTools::osim2stdDofName(osimCoordinateNames_.at(coordinateIterator))];
+    for(int i = 0; i < musclesToConsider.size()-1; ++i)
+        maFile << musclesToConsider.at(i) << "\t";
     // the last one is printed outside the for cycle because we do not want "\t" at the end of the line
-    maFile << OpenSim2StdTools::osim2stdMuscleName(osimMusclesNames_.back()) << endl; 
+    maFile << musclesToConsider.back() << endl;
     int nRows = maData_.at(coordinateIterator).at(1).size();
-    int nCols = maData_.at(coordinateIterator).size();
+    //find the columns (muscles) we are interested in for this dof (coordinate)
+    vector<int> muscleIndices(musclesToConsider.size());
+    for (int i=0; i<musclesToConsider.size(); ++i)
+    {
+        vector<string>::const_iterator foundMuscle=std::find(osimMusclesNames_.begin(), osimMusclesNames_.end(), OpenSim2StdTools::std2osimMuscleName(musclesToConsider.at(i)));
+        if (foundMuscle!=osimMusclesNames_.end())
+            muscleIndices[i]=foundMuscle-osimMusclesNames_.begin();
+        else
+        {
+            cout << "ERROR while checking muscle names to write to output for each dof"<<endl;
+            exit(EXIT_FAILURE);
+        }
+    }
     for(int iRow = 0; iRow < nRows; ++iRow) {
-        for(int iCol = 0; iCol < nCols; ++iCol)
-            maFile << maData_.at(coordinateIterator).at(iCol).at(iRow) << "\t";
+        for(int iCol = 0; iCol < muscleIndices.size(); ++iCol)
+            maFile << maData_.at(coordinateIterator).at(muscleIndices[iCol]).at(iRow) << "\t";
         maFile << endl;
     }  
     

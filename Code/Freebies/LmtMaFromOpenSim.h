@@ -40,7 +40,7 @@ public:
     ~LmtMaFromOpenSim();
     
      void saveLmt(std::ostream &os);
-     void saveMa(const std::string &os);
+     void saveMa(const std::string &os, std::map<std::string, std::vector<std::string> > &musclesConnectedToDofs);
     
 //    void printAnglesCombinations(std::string anglesFilename);
   
