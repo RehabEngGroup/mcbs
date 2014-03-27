@@ -265,14 +265,18 @@ void SplineSet::evalLmt( const string& outputDir, const vector< vector< double >
         cout << "ERROR: " << lmtFileName << " output file could not be open\n";
         exit(EXIT_FAILURE);
     }
-    
+
+    for (unsigned int i = 0; i < muscleNames_.size(); ++i)
+      lmtFile << muscleNames_.at(i) << "\t";
+    lmtFile << endl;
+
     int noCombinations = angleCombinations.size();  
     for (int i = 0; i < noCombinations; ++i) { 
         vector<double> lmtValues;
         for (unsigned int currentMuscle=0; currentMuscle < muscleNames_.size(); ++currentMuscle)
            lmtValues.push_back(splines_.at(currentMuscle).getValue(angleCombinations.at(i)));
            for (unsigned int j = 0; j < muscleNames_.size(); ++j)
-              lmtFile << lmtValues.at(j) << " ";
+              lmtFile << lmtValues.at(j) << "\t";
         lmtFile << endl;
     }
     lmtFile.close();
@@ -323,8 +327,8 @@ void SplineSet::evalMa(const string& outputDir, const  map<string, vector<string
   
   
   // for all the degrees of freedom in the map
-  for ( map<string, vector<string> >::const_iterator musclesIt = musclesConnectedToDofs.begin(); musclesIt!= musclesConnectedToDofs.end() ; ++musclesIt) {
-    vector<string>::iterator dofIt=find(dofNames_.begin(), dofNames_.end(), musclesIt->first);
+  for ( map<string, vector<string> >::const_iterator dofMusclesIT = musclesConnectedToDofs.begin(); dofMusclesIT!= musclesConnectedToDofs.end() ; ++dofMusclesIT) {
+    vector<string>::iterator dofIt=find(dofNames_.begin(), dofNames_.end(), dofMusclesIT->first);
     if ( dofIt==dofNames_.end() ) {
       cout << "ERROR: dofsNames differ\n";
       exit(EXIT_FAILURE);
@@ -340,15 +344,15 @@ void SplineSet::evalMa(const string& outputDir, const  map<string, vector<string
       exit(EXIT_FAILURE);
     }
 
-    for (unsigned int i = 0; i < musclesIt->second.size(); ++i)
-      outputDataFile << musclesIt->second.at(i) << "\t";
+    for (unsigned int i = 0; i < dofMusclesIT->second.size(); ++i)
+      outputDataFile << dofMusclesIT->second.at(i) << "\t";
     outputDataFile << endl;
    
 
     double nextValue;
     for (unsigned int j = 0; j < angleCombinations.size(); ++j) {
-      for (unsigned int i = 0; i < musclesIt->second.size(); ++i) {
-         vector<string>::iterator iter = find(muscleNames_.begin(), muscleNames_.end(), musclesIt->second.at(i));
+      for (unsigned int i = 0; i < dofMusclesIT->second.size(); ++i) {
+         vector<string>::iterator iter = find(muscleNames_.begin(), muscleNames_.end(), dofMusclesIT->second.at(i));
          if (iter == muscleNames_.end()) {
            cout << "something went wrong\n";
            exit(EXIT_FAILURE);
