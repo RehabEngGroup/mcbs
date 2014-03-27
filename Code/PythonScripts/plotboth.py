@@ -16,8 +16,9 @@ for i in range(0,dataSpline.shape[1]):
   fromSpline = dataSpline[:,i]  # Creates arrays for first two columns
 
   # Create a plot of the data
-  plot(fromOpenSim-fromSpline)
-
+  p1, = plot(fromOpenSim, 'b')
+  p2, = plot(fromSpline, 'r')
+  legend([p1, p2], ["from Spline (1st file)", "from OpenSim (2nd file)"])
   # Turn on a grid
   grid(True)
 

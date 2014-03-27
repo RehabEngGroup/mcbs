@@ -56,12 +56,11 @@ echo "==================================================="
 echo "           3. generate Lmt and Ma with Splines"
 echo "==================================================="
 
-$PROGRAM_DIRECTORY/generateLmtMaWithSplineCoefficients $DATA_DIRECTORY/computeCoefficients/Output/ 
-cp $DATA_DIRECTORY/generateLmtMaWithSplineCoefficients/Input/ $DATA_DIRECTORY/generateLmtMaWithSplineCoefficients/Output/
+$PROGRAM_DIRECTORY/generateLmtMaWithSplineCoefficients $DATA_DIRECTORY/computeCoefficients/Output/ $DATA_DIRECTORY/generateLmtMaWithSplineCoefficients/Input/ $DATA_DIRECTORY/generateLmtMaWithSplineCoefficients/Output/
 
 
 echo "==================================================="
-echo "  4. generate Lmt with OpenSim (ma still missing)"
+echo "           4. generate Lmt and Ma with OpenSim "
 echo "==================================================="
 
 $PROGRAM_DIRECTORY/generateLmtMaEvalGridsWithOpenSim $DATA_DIRECTORY/generateLmtMaEvalGridsWithOpenSim/Input/ $DATA_DIRECTORY/generateLmtMaEvalGridsWithOpenSim/Output/
@@ -69,9 +68,9 @@ $PROGRAM_DIRECTORY/generateLmtMaEvalGridsWithOpenSim $DATA_DIRECTORY/generateLmt
 
 echo "==============================================================="
 echo "You can compare the lmt values produced with Spline and OpenSim"
-echo "with the the python program in Code/PythonScripts/compare.py"
-echo "copy the lmt.in generated with OpenSim"
-echo " and the lmt.out generated with Splines"
+echo "with the the python programs in Code/PythonScripts"
 echo "in the PythonScripts directory and run"
-echo "python compare.py"
+echo "python compare.py $DATA_DIRECTORY/generateLmtMaWithSplineCoefficients/Output/lmt.out $DATA_DIRECTORY/generateLmtMaEvalGridsWithOpenSim/Output/lmt.out"
+echo "or"
+echo "python plotboth.py $DATA_DIRECTORY/generateLmtMaWithSplineCoefficients/Output/lmt.out $DATA_DIRECTORY/generateLmtMaEvalGridsWithOpenSim/Output/lmt.out"
 echo "==============================================================="
