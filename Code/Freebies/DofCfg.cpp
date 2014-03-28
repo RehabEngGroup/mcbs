@@ -84,8 +84,8 @@ DofCfg::DofCfg(string cfgFilename){
     nRows_ = 1;
     for(unsigned int i = 0; i < dofNames_.size(); ++i)
         nRows_ *= (noIntervals_.at(i) + 1);
-    for (int i = 0; i < nCols_; ++i)
-        anglesCombinations_.push_back(vector<double>(nRows_));
+    for (int i = 0; i < nRows_; ++i)
+        anglesCombinations_.push_back(vector<double>(nCols_));
     
     multeplicity_ = 1;
     generateAnglesCombinations();
@@ -118,8 +118,8 @@ void DofCfg::generateBetweenAnglesCombinations() {
     int nRows = 1;
     for(unsigned int i = 0; i < dofNames_.size(); ++i)
         nRows *= (noIntervals.at(i) + 1);
-    for (int i = 0; i < nCols_; ++i)
-        betweenAnglesCombinations_.push_back(vector<double>(nRows));
+    for (int i = 0; i < nRows_; ++i)
+        betweenAnglesCombinations_.push_back(vector<double>(nCols_));
     
     multeplicity_ = 1;
     createCombinations(startValues, stopValues, noIntervals, betweenAnglesCombinations_, 0);
@@ -145,7 +145,7 @@ void DofCfg::createCombinations(const vector<double>& startValues, const vector<
     do {
         for(int i = 0; i < noIntervals.at(pos) + 1; ++i)
             for(int j = 0; j < multeplicity_; ++j) {
-                combinations.at(nCols_-pos-1).at(rowCounter) = startValues.at(pos) + i*increment;
+                combinations.at(rowCounter).at(pos) = startValues.at(pos) + i*increment;
                 ++rowCounter;
             }
     } while(rowCounter < nRows);

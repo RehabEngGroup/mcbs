@@ -26,7 +26,6 @@
 #include <string>
 #include <map>
 #include "Spline.h"
-#include "DofCfg.h"
 
 
 const int N_DOF = 4;

@@ -101,21 +101,21 @@ void LmtMaFromOpenSim::computeLmtMaFromOpenSim(const vector<string>& dofNames, c
 void LmtMaFromOpenSim::convertToStorage(const vector<vector<double> >& anglesCombinations) {
     
     startTime_ = .0;
-    endTime_ = anglesCombinations.at(0).size()-1;
+    endTime_ = anglesCombinations.size()-1;
 
     anglesDataForModel_.setInDegrees(false);
-    double currentRow[anglesCombinations.size()];
-    int nRows = anglesCombinations.at(0).size();
+    double currentRow[anglesCombinations.at(0).size()];
+    int nRows = anglesCombinations.size();
     for(int iRow = 0; iRow < nRows; ++iRow) {
         OpenSim::StateVector currentState;
-        for(int iCol = 0; iCol < anglesCombinations.size(); ++iCol)
-            currentRow[iCol] = radians(anglesCombinations.at(iCol).at(iRow));
-        currentState.setStates(iRow, anglesCombinations.size(), currentRow); 
+        for(int iCol = 0; iCol < anglesCombinations.at(iRow).size(); ++iCol)
+            currentRow[iCol] = radians(anglesCombinations.at(iRow).at(iCol));
+        currentState.setStates(iRow, anglesCombinations.at(iRow).size(), currentRow);
         anglesDataForModel_.append(currentState);
     }
     OpenSim::Array<string> columnLabels;
     columnLabels.append("time");
-    for(int i = nDofs_-1; i >= 0; --i) {
+    for(int i = 0; i <nDofs_; ++i) {
         columnLabels.append(osimDofNames_.at(i));
     }    
     anglesDataForModel_.setColumnLabels(columnLabels);
@@ -200,7 +200,7 @@ void LmtMaFromOpenSim::runMuscleAnalysis() {
 
 void LmtMaFromOpenSim::saveLmt(ostream &os) {
     for(int i = 0; i < osimMusclesNames_.size()-1; ++i)
-        os << OpenSim2StdTools::osim2stdMuscleName(osimMusclesNames_.at(i)) << " ";
+        os << OpenSim2StdTools::osim2stdMuscleName(osimMusclesNames_.at(i)) << "\t";
     // the last one is printed outside the for cycle because we do not want " " at the end of the line
     os << OpenSim2StdTools::osim2stdMuscleName(osimMusclesNames_.back()) << endl; 
     int nRows = lmtData_.at(1).size();

@@ -93,17 +93,9 @@ int main(int argc, const char* argv[]) {
             anglesCombinations.push_back(currentAngleCombination);
     }
     anglesFile.close();
-    
-    //Monica I hate you: now I have to create a new anglesCombinations where dimensions are swapped
-    vector< vector< double > > anglesCombinationsBySample(anglesCombinations.at(0).size(), vector<double>(anglesCombinations.size()));
-    for(size_t i=0; i< anglesCombinations.size(); ++i)
-        for (size_t j=0; j<anglesCombinations.at(0).size(); ++j)
-            anglesCombinationsBySample.at(j).at(i)=anglesCombinations.at(i).at(j);
 
-    //Monica I hate you again - I have to reverse the order of dofNames
-    std::reverse(dofsNames.begin(),dofsNames.end());
     string osimModelFilename = inputDir + "/model.osim";
-    LmtMaFromOpenSim lmtGridNodesData(osimModelFilename, dofsNames, musclesNames, anglesCombinationsBySample, true);
+    LmtMaFromOpenSim lmtGridNodesData(osimModelFilename, dofsNames, musclesNames, anglesCombinations, true);
     
     string lmtFilename = outputDir + "lmt.out";
     ofstream lmtFile(lmtFilename.c_str());

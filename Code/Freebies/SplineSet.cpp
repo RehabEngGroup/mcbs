@@ -338,7 +338,6 @@ void SplineSet::evalMa(const string& outputDir, const  map<string, vector<string
     // Then open the outputDataFile
     string outputDataFilename = outputDir +  "ma" + dofNames_[dofIndex] + ".out";
     ofstream outputDataFile(outputDataFilename.c_str()); 
-    
     if (!outputDataFile.is_open()) {
       cout << "ERROR: outputDataFile could not be open\n";
       exit(EXIT_FAILURE);
@@ -350,15 +349,19 @@ void SplineSet::evalMa(const string& outputDir, const  map<string, vector<string
    
 
     double nextValue;
-    for (unsigned int j = 0; j < angleCombinations.size(); ++j) {
-      for (unsigned int i = 0; i < dofMusclesIT->second.size(); ++i) {
+    vector <size_t> splineNums(dofMusclesIT->second.size());
+    for (unsigned int i = 0; i < dofMusclesIT->second.size(); ++i) {
          vector<string>::iterator iter = find(muscleNames_.begin(), muscleNames_.end(), dofMusclesIT->second.at(i));
          if (iter == muscleNames_.end()) {
            cout << "something went wrong\n";
            exit(EXIT_FAILURE);
          } 
-        size_t splineNum = std::distance(muscleNames_.begin(), iter);
-        outputDataFile << std::setprecision(NUMBER_DIGIT_OUTPUT) << std::fixed << -roundIt(splines_[splineNum].getFirstDerivative(angleCombinations.at(j),dofIndex), DIGIT_NUM+2) << "\t";
+        splineNums.at(i)= iter - muscleNames_.begin();
+    }
+
+    for (unsigned int j = 0; j < angleCombinations.size(); ++j) {
+      for (unsigned int i = 0; i < dofMusclesIT->second.size(); ++i) {
+        outputDataFile << std::setprecision(NUMBER_DIGIT_OUTPUT) << std::fixed << -roundIt(splines_[splineNums[i]].getFirstDerivative(angleCombinations.at(j),dofIndex), DIGIT_NUM+2) << "\t";
           
       } 
       outputDataFile << endl;
