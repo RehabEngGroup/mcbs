@@ -18,7 +18,6 @@ set(generateLmtMaEvalGridsWithOpenSim_SOURCES
     LmtMaFromOpenSim.h
     LmtMaFromOpenSim.cpp
     OpenSim2StdTools.h
-    OpenSim2StdTools.cpp
     ReadMuscles.h
     ReadMuscles.cpp
 )
@@ -36,7 +35,6 @@ set(generateLmtGridWithOpenSim_SOURCES
     LmtMaFromOpenSim.h
     LmtMaFromOpenSim.cpp
     OpenSim2StdTools.h
-    OpenSim2StdTools.cpp
     DofCfg.h
     DofCfg.cpp
     ReadMuscles.h

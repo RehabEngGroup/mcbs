@@ -336,7 +336,7 @@ void SplineSet::evalMa(const string& outputDir, const  map<string, vector<string
     size_t dofIndex=dofIt-dofNames_.begin(); //index for this degree of freedom in our member variables
     
     // Then open the outputDataFile
-    string outputDataFilename = outputDir +  "ma" + dofNames_[dofIndex] + ".out";
+    string outputDataFilename = outputDir +  "ma_" + dofNames_[dofIndex] + ".out";
     ofstream outputDataFile(outputDataFilename.c_str()); 
     if (!outputDataFile.is_open()) {
       cout << "ERROR: outputDataFile could not be open\n";

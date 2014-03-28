@@ -26,11 +26,6 @@
 
 namespace OpenSim2StdTools {
 
-    const std::string std2osimMuscleName(const std::string& srcStdName);
-    const std::string osim2stdMuscleName(const std::string& srcOsimName);
-    const std::string std2osimDofName(const std::string& srcStdName);
-    const std::string osim2stdDofName(const std::string& srcOsimName);
-
     template <class T>
     void vector2array(const std::vector<T>& srcVector, OpenSim::Array<T>& dstArray){
         int size = srcVector.size();

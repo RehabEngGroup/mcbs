@@ -77,21 +77,12 @@ LmtMaFromOpenSim::LmtMaFromOpenSim(const LmtMaFromOpenSim& orig) {
 void LmtMaFromOpenSim::computeLmtMaFromOpenSim(const vector<string>& dofNames, const vector<string>& musclesNames, const vector< vector<double> >& angleCombinations) {
     
     // clear data from previous analysis
-    osimMusclesNames_.clear();
-    osimDofNames_.clear();
     lmtData_.clear();
     anglesDataForModel_.purge();    
     
-    for(int i = 0; i < musclesNames.size(); ++i) {
-        string osimName = OpenSim2StdTools::std2osimMuscleName(musclesNames.at(i));
-        osimMusclesNames_.push_back(osimName);
-    }
-    
     nDofs_ = dofNames.size();
-    for(int i = 0; i < nDofs_; ++i) {
-        string osimName = OpenSim2StdTools::std2osimDofName(dofNames.at(i));
-        osimDofNames_.push_back(osimName);
-    }
+    osimDofNames_=dofNames;
+    osimMusclesNames_=musclesNames;
     
     convertToStorage(angleCombinations);    
     runMuscleAnalysis();
@@ -200,9 +191,9 @@ void LmtMaFromOpenSim::runMuscleAnalysis() {
 
 void LmtMaFromOpenSim::saveLmt(ostream &os) {
     for(int i = 0; i < osimMusclesNames_.size()-1; ++i)
-        os << OpenSim2StdTools::osim2stdMuscleName(osimMusclesNames_.at(i)) << "\t";
+        os << osimMusclesNames_.at(i) << "\t";
     // the last one is printed outside the for cycle because we do not want " " at the end of the line
-    os << OpenSim2StdTools::osim2stdMuscleName(osimMusclesNames_.back()) << endl; 
+    os << osimMusclesNames_.back() << endl;
     int nRows = lmtData_.at(1).size();
     int nCols = lmtData_.size();
     for(int iRow = 0; iRow < nRows; ++iRow) {
@@ -216,10 +207,10 @@ void LmtMaFromOpenSim::saveMa(const string& os, std::map< string, vector< string
   cout << "saving MA" << endl; 
   for (int coordinateIterator = 0; coordinateIterator < osimCoordinateNames_.size(); ++coordinateIterator) {
     // open next ma file
-    string maFileName = os + "ma" + OpenSim2StdTools::osim2stdDofName(osimCoordinateNames_.at(coordinateIterator)) + ".out"; 
+    string maFileName = os + "ma_" + osimCoordinateNames_.at(coordinateIterator) + ".out";
     cout << maFileName << endl;
     ofstream maFile(maFileName.c_str());
-    vector<string>& musclesToConsider=musclesConnectedToDofs[OpenSim2StdTools::osim2stdDofName(osimCoordinateNames_.at(coordinateIterator))];
+    vector<string>& musclesToConsider=musclesConnectedToDofs[osimCoordinateNames_.at(coordinateIterator)];
     for(int i = 0; i < musclesToConsider.size()-1; ++i)
         maFile << musclesToConsider.at(i) << "\t";
     // the last one is printed outside the for cycle because we do not want "\t" at the end of the line
@@ -229,7 +220,7 @@ void LmtMaFromOpenSim::saveMa(const string& os, std::map< string, vector< string
     vector<int> muscleIndices(musclesToConsider.size());
     for (int i=0; i<musclesToConsider.size(); ++i)
     {
-        vector<string>::const_iterator foundMuscle=std::find(osimMusclesNames_.begin(), osimMusclesNames_.end(), OpenSim2StdTools::std2osimMuscleName(musclesToConsider.at(i)));
+        vector<string>::const_iterator foundMuscle=std::find(osimMusclesNames_.begin(), osimMusclesNames_.end(), musclesToConsider.at(i));
         if (foundMuscle!=osimMusclesNames_.end())
             muscleIndices[i]=foundMuscle-osimMusclesNames_.begin();
         else
