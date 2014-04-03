@@ -33,8 +33,7 @@ using std::ifstream;
 using std::map;
 
 #include "LmtMaFromOpenSim.h"
-#include "DofCfg.h"
-#include "ReadMuscles.h"
+#include "MusclesCfg.h"
 
 
 
@@ -55,9 +54,9 @@ int main(int argc, const char* argv[]) {
     
     //-- read the muscles we want in the grid
     string musclesFilename = inputDir + "/muscles.in"; 
-    vector<string> musclesNames;
-    map<string, vector<string> > musclesConnectedToDofs;
-    readMuscles(musclesFilename, musclesNames, musclesConnectedToDofs);
+    MusclesCfg muscCfg(musclesFilename);
+    const vector<string> &musclesNames=muscCfg.getMuscleNames();
+    const map<string, vector<string> > &musclesConnectedToDofs=muscCfg.getMusclesPerDof();
 
     
 //------>  read the angles

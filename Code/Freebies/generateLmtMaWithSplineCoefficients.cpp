@@ -31,7 +31,7 @@ using std::ofstream;
 #include <stdlib.h>
 #include "SplineSet.h"
 #include <math.h>
-#include "ReadMuscles.h"
+#include "MusclesCfg.h"
 #include <map>
 using std::map;
 
@@ -63,9 +63,9 @@ int main(int argc, const char* argv[]) {
   
     //--------------> read the muscles
     string musclesFilename = inputDir + "/muscles.in"; 
-    vector<string> musclesNames;
-    map<string, vector<string> >musclesConnectedToDofs;
-    readMuscles(musclesFilename, musclesNames, musclesConnectedToDofs);
+    MusclesCfg muscCfg(musclesFilename);
+    const vector<string> &musclesNames=muscCfg.getMuscleNames();
+    const map<string, vector<string> > &musclesConnectedToDofs=muscCfg.getMusclesPerDof();
       
     // and you create the splines
     SplineSet splineSet(coeffDir, musclesNames);
@@ -128,7 +128,4 @@ int main(int argc, const char* argv[]) {
     
     exit(EXIT_SUCCESS);
 } 
-     
-       
 
-  

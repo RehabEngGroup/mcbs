@@ -203,14 +203,14 @@ void LmtMaFromOpenSim::saveLmt(ostream &os) {
     }   
 }
 
-void LmtMaFromOpenSim::saveMa(const string& os, std::map< string, vector< string > >& musclesConnectedToDofs) {
+void LmtMaFromOpenSim::saveMa(const string& os, const std::map< string, vector< string > >& musclesConnectedToDofs) {
   cout << "saving MA" << endl; 
   for (int coordinateIterator = 0; coordinateIterator < osimCoordinateNames_.size(); ++coordinateIterator) {
     // open next ma file
     string maFileName = os + "ma_" + osimCoordinateNames_.at(coordinateIterator) + ".out";
     cout << maFileName << endl;
     ofstream maFile(maFileName.c_str());
-    vector<string>& musclesToConsider=musclesConnectedToDofs[osimCoordinateNames_.at(coordinateIterator)];
+    const vector<string>& musclesToConsider=musclesConnectedToDofs.at(osimCoordinateNames_.at(coordinateIterator));
     for(int i = 0; i < musclesToConsider.size()-1; ++i)
         maFile << musclesToConsider.at(i) << "\t";
     // the last one is printed outside the for cycle because we do not want "\t" at the end of the line

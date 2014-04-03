@@ -29,7 +29,7 @@ using std::vector;
 using std::ofstream;
 using std::ifstream;
 #include <stdlib.h>
-#include "ReadMuscles.h"
+#include "MusclesCfg.h"
 
 #include "LmtMaFromOpenSim.h"
 #include "DofCfg.h" 
@@ -56,8 +56,8 @@ int main(int argc, const char* argv[]) {
     
     //-- read the muscles we want in the grid
     string musclesFilename = inputDir + "/muscles.in"; 
-    vector<string> musclesNames;
-    readMuscles(musclesFilename, musclesNames);
+    MusclesCfg muscCfg(musclesFilename);
+    const vector<string> &musclesNames=muscCfg.getMuscleNames();
     
     //-- create the angles combinations
     string configFilename = inputDir + "/dofAngles.cfg";

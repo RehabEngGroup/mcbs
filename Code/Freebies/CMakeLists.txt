@@ -18,8 +18,8 @@ set(generateLmtMaEvalGridsWithOpenSim_SOURCES
     LmtMaFromOpenSim.h
     LmtMaFromOpenSim.cpp
     OpenSim2StdTools.h
-    ReadMuscles.h
-    ReadMuscles.cpp
+    MusclesCfg.h
+    MusclesCfg.cpp
 )
 
 add_executable(generateLmtMaEvalGridsWithOpenSim
@@ -37,8 +37,8 @@ set(generateLmtGridWithOpenSim_SOURCES
     OpenSim2StdTools.h
     DofCfg.h
     DofCfg.cpp
-    ReadMuscles.h
-    ReadMuscles.cpp
+    MusclesCfg.h
+    MusclesCfg.cpp
 )
 
 add_executable(generateLmtGridWithOpenSim
@@ -76,8 +76,8 @@ set(generateLmtMaWithSplineCoefficients_SOURCES
     generateLmtMaWithSplineCoefficients.cpp
     SplineSet.h
     SplineSet.cpp
-    ReadMuscles.h
-    ReadMuscles.cpp
+    MusclesCfg.h
+    MusclesCfg.cpp
 )
 
 add_executable(generateLmtMaWithSplineCoefficients
