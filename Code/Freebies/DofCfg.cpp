@@ -28,9 +28,9 @@ using std::ostream;
 using std::string;
 #include <vector>
 using std::vector;
-#include <stdlib.h>
-#define _USE_MATH_DEFINES
-#include <math.h>
+#include <cstdlib>
+
+#include <cmath>
 
 #include "DofCfg.h"
 

@@ -19,8 +19,10 @@
 
 
 
-#include <math.h>
-#include <stdlib.h>
+
+#include <cmath>
+#include <algorithm>
+#include <cstdlib>
 #include <iostream>
 #include "Spline.h"
 

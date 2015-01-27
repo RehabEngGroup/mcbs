@@ -28,7 +28,7 @@ using std::vector;
 #include <fstream>
 using std::ofstream;
 using std::ifstream;
-#include <stdlib.h>
+#include <cstdlib>
 #include <map>
 using std::map;
 

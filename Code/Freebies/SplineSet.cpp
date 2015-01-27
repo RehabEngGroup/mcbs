@@ -21,7 +21,7 @@
 #include "SplineSet.h"
 #include "Spline.cpp"
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 using std::cout; 
 #include <fstream>

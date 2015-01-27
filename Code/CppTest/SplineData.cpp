@@ -25,9 +25,9 @@ using std::stringstream;
 #include <iostream>
 using std::cout;
 using std::endl;
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include <stdlib.h>
+
+#include <cmath>
+#include <cstdlib>
 
 #include <fstream>
 using std::ifstream;

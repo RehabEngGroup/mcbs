@@ -3,6 +3,8 @@ include_directories(${Spline_INCLUDE_DIRS})
  
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
+add_definitions("/D_USE_MATH_DEFINES")
+
 find_package(OpenSim) #which is the minimum required version?
 
 if(OPENSIM_FOUND)
