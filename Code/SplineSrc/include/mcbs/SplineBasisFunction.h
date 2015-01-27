@@ -24,11 +24,13 @@
 #ifndef SplineBasisFunction_h
 #define SplineBasisFunction_h
 
+namespace mcbs {
 class SplineBasisFunction {
 public:
   static double getValue(double x, int k, double a, double h);
   static double getFirstDerivative(double x, int k, double a, double h);
 };
  
+}
 #endif
 

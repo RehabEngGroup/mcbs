@@ -19,7 +19,7 @@
 
 
 #include "SplineSet.h"
-#include "Spline.cpp"
+#include <mcbs/Spline.cpp>
 
 #include <cstdlib>
 #include <iostream>
@@ -42,6 +42,8 @@ using std::map;
 #include <fstream>
 using std::ifstream;
 using std::ofstream;
+using namespace mcbs;
+
 
 inline double radians (double d) {
 return d * M_PI / 180;

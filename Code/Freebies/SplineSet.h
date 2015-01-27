@@ -25,7 +25,7 @@
 #include <vector>
 #include <string>
 #include <map>
-#include "Spline.h"
+#include <mcbs/Spline.h>
 
 
 const int N_DOF = 4;
@@ -48,7 +48,7 @@ public:
     void evalMa(const std::string& outputDir, const std::map< std::string, std::vector< std::string > >& musclesConnectedToDofs, const std::vector< std::vector< double > >& angleCombinations  );
   
 private:
-    std::vector< Spline<N_DOF> >  splines_;
+    std::vector< mcbs::Spline<N_DOF> >  splines_;
     std::vector< std::string >    dofNames_;
     std::vector< double > a_;
     std::vector< double > b_;

@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.8)
 
 project(multidimensionalcubicbspline)
 
+# Include GNUInstallDirs to get canonical paths
+include(GNUInstallDirs)
+
 if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc ")# -fpermissive")
 elseif(UNIX)
@@ -20,3 +23,33 @@ endif()
 add_subdirectory(SplineSrc)
 add_subdirectory(CppTest)
 add_subdirectory(Freebies)
+
+# Create mbcsConfig.cmake etc.
+set(ConfigPackageLocation ${CMAKE_INSTALL_LIBDIR}/mcbs)
+install(EXPORT mcbsTargets
+        FILE mcbsTargets.cmake
+        NAMESPACE mcbs::
+        DESTINATION ${ConfigPackageLocation})
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(mcbsConfig.cmake.in
+                              ${CMAKE_CURRENT_BINARY_DIR}/mcbsConfig.cmake
+                              INSTALL_DESTINATION ${ConfigPackageLocation}
+                              PATH_VARS CMAKE_INSTALL_INCLUDEDIR)
+
+write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/mcbsConfigVersion.cmake
+                                    VERSION 1.0
+                                    COMPATIBILITY ExactVersion )
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mcbsConfig.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/mcbsConfigVersion.cmake
+              DESTINATION ${ConfigPackageLocation})
+
+# Uninstall target
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+
+add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)

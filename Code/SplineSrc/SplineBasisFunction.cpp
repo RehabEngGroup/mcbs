@@ -18,10 +18,10 @@
  */
 
 
-#include "SplineBasisFunction.h" 
+#include <mcbs/SplineBasisFunction.h>
 #include <cmath>
 
-double SplineBasisFunction::getValue(double x, int k, double a, double h){
+double mcbs::SplineBasisFunction::getValue(double x, int k, double a, double h){
   double t = fabs( ( (x - a) / h ) - (k - 1) );
   
   if ( (t <= 2) && (t >= 1) )   return pow(( 2 - t ), 3);
@@ -29,7 +29,7 @@ double SplineBasisFunction::getValue(double x, int k, double a, double h){
     else return 0;
 }
 
-double SplineBasisFunction::getFirstDerivative(double x, int k, double a, double h) {
+double mcbs::SplineBasisFunction::getFirstDerivative(double x, int k, double a, double h) {
   double t = ( ( (x - a) / h ) - (k - 1) );
 
   if ( (t <= 2) && (t >= 1) )                  return -3*(2-t)*(2-t)/h;
