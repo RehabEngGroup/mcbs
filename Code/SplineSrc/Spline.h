@@ -23,8 +23,21 @@
 
 
 #include <vector>
+#include <exception>
 
 #include "SplineBasisFunction.h"
+
+namespace mcbs {
+
+
+class x_out_of_bounds: public std::exception
+{
+public:
+  virtual const char* what() const throw()
+  {
+    return "Values x are out of boundaries";
+  }
+};
 
 template <int dim>
 class Spline; 
