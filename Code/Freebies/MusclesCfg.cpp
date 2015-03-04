@@ -25,7 +25,7 @@
 #include <iostream>
 #include <sstream>
 using namespace std;
-#include <stdlib.h>
+#include <cstdlib>
 
 
 MusclesCfg::MusclesCfg(const string& musclesFilename)

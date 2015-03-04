@@ -28,7 +28,7 @@ using std::string;
 #include <fstream>
 using std::ifstream;
 using std::ofstream;
-#include <stdlib.h>
+#include <cstdlib>
 #include "SplineSet.h"
 
 

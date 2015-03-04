@@ -24,7 +24,7 @@
 #ifndef SplineData_h
 #define SplineData_h
 
-#include "Spline.h"
+#include <mcbs/Spline.h>
 
 #include <vector>
 using std::vector;
@@ -63,7 +63,7 @@ private:
   vector< vector< double> > y_;
     
   // Splines
-  vector< Spline<N_DOF> > splines_;
+  vector< mcbs::Spline<N_DOF> > splines_;
   
   // EvalData
   string evalDataDir_;

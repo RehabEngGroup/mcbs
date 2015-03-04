@@ -28,8 +28,7 @@ using std::cout;
 using std::endl;
 #include <fstream>
 using std::ofstream;
-#include <stdlib.h>
-#include <boost/concept_check.hpp>
+#include <cstdlib>
 #include <fstream>
 using std::ostream;
 #include <OpenSim/OpenSim.h>
@@ -95,13 +94,13 @@ void LmtMaFromOpenSim::convertToStorage(const vector<vector<double> >& anglesCom
     endTime_ = anglesCombinations.size()-1;
 
     anglesDataForModel_.setInDegrees(false);
-    double currentRow[anglesCombinations.at(0).size()];
+    std::vector<double> currentRow(anglesCombinations.at(0).size());
     int nRows = anglesCombinations.size();
     for(int iRow = 0; iRow < nRows; ++iRow) {
         OpenSim::StateVector currentState;
         for(int iCol = 0; iCol < anglesCombinations.at(iRow).size(); ++iCol)
             currentRow[iCol] = radians(anglesCombinations.at(iRow).at(iCol));
-        currentState.setStates(iRow, anglesCombinations.at(iRow).size(), currentRow);
+        currentState.setStates(iRow, anglesCombinations.at(iRow).size(), currentRow.data());
         anglesDataForModel_.append(currentState);
     }
     OpenSim::Array<string> columnLabels;

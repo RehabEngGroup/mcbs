@@ -28,9 +28,9 @@ using std::string;
 using std::ifstream;
 using std::ofstream;
 #include<sstream>
-#include <stdlib.h>
+#include <cstdlib>
 #include "SplineSet.h"
-#include <math.h>
+#include <cmath>
 #include "MusclesCfg.h"
 #include <map>
 using std::map;

@@ -25,9 +25,9 @@ using std::stringstream;
 #include <iostream>
 using std::cout;
 using std::endl;
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include <stdlib.h>
+
+#include <cmath>
+#include <cstdlib>
 
 #include <fstream>
 using std::ifstream;
@@ -36,9 +36,10 @@ using std::ofstream;
 #include <iomanip>
 
 #include "SplineData.h"
-#include "Spline.cpp"
+#include <mcbs/Spline.cpp>
 
 //#define LOG
+using namespace mcbs;
 
 const int DIGIT_NUM = 8;   
 const int NUMBER_DIGIT_OUTPUT = 8;

@@ -26,7 +26,7 @@ using std::cout;
 using std::endl;
 #include <string>
 using std::string;
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "SplineData.h"
 

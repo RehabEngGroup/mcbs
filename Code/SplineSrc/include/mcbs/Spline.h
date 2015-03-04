@@ -24,8 +24,9 @@
 
 #include <vector>
 
-#include "SplineBasisFunction.h"
+#include <mcbs/SplineBasisFunction.h>
 
+namespace mcbs {
 template <int dim>
 class Spline; 
 
@@ -81,6 +82,7 @@ class Spline {
     friend class Spline<dim+1>;
 };
 
+}
 
 
 #endif

@@ -19,8 +19,10 @@
 
 
 
-#include <math.h>
-#include <stdlib.h>
+
+#include <cmath>
+#include <algorithm>
+#include <cstdlib>
 #include <iostream>
 #include "Spline.h"
 
@@ -28,7 +30,7 @@
 //#define LOG_SPLINE
 
 template< int dim >
-Spline<dim>::Spline(const std::vector<double>& a, const std::vector<double>& b, const std::vector<int>& n)
+mcbs::Spline<dim>::Spline(const std::vector<double>& a, const std::vector<double>& b, const std::vector<int>& n)
 :a_(a), b_(b), n_(n), splineFirstPhase_(a_, b_, n_), splineSecondPhase_(a_[dim-1], b_[dim-1], n_[dim-1])   {
   for (int i = 0 ; i < dim; ++i ) {
     h_.push_back( ( b_[i]-a_[i] ) / n_[i] );
@@ -56,7 +58,7 @@ Spline<dim>::Spline(const std::vector<double>& a, const std::vector<double>& b, 
 }
 
 template< int dim >
-void Spline<dim>::computeCoefficients(std::vector<double>& y, std::vector<double>::iterator fromWhereInY ) {
+void mcbs::Spline<dim>::computeCoefficients(std::vector<double>& y, std::vector<double>::iterator fromWhereInY ) {
 
   // compute the number of value to be interpolated
   std::vector<double>::iterator toWhereInY = fromWhereInY + sizeOfY_;
@@ -120,7 +122,7 @@ void Spline<dim>::computeCoefficients(std::vector<double>& y, std::vector<double
 
 
 template< int dim >
-bool Spline<dim>::checkValues(const std::vector<double>& x) const {
+bool mcbs::Spline<dim>::checkValues(const std::vector<double>& x) const {
   for (int i = 0; i < dim; ++i )
     if ( (x[i] < a_[i]) || (x[i] > b_[i]) )
       return false;
@@ -129,7 +131,7 @@ bool Spline<dim>::checkValues(const std::vector<double>& x) const {
 
 
 template< int dim >
-void Spline<dim>::computeInterval(std::vector<int>& l, std::vector<int>& m, const std::vector<double>& x) const {
+void mcbs::Spline<dim>::computeInterval(std::vector<int>& l, std::vector<int>& m, const std::vector<double>& x) const {
   for (int i = 0; i < dim; ++i) {
     l[i] = floor( ( x[i] - a_[i] ) / h_[i] );
     m[i] = std::min( l[i] + 3, n_[i] + 2);  
@@ -138,7 +140,7 @@ void Spline<dim>::computeInterval(std::vector<int>& l, std::vector<int>& m, cons
 
 
 template< int dim >
-double Spline<dim>::getValue(const std::vector<double>& x) const {
+double mcbs::Spline<dim>::getValue(const std::vector<double>& x) const {
   std::vector<int> l(dim);
   std::vector<int> m(dim);
   if (!checkValues(x)) {
@@ -197,7 +199,7 @@ double Spline<dim>::getValue(const std::vector<double>& x) const {
 }
 
 template< int dim >
-double Spline<dim>::getFirstDerivative(const std::vector<double>& x, const int dimDerivative) {
+double mcbs::Spline<dim>::getFirstDerivative(const std::vector<double>& x, const int dimDerivative) {
 
   std::vector<int> l(dim);
   std::vector<int> m(dim);
@@ -272,7 +274,7 @@ double Spline<dim>::getFirstDerivative(const std::vector<double>& x, const int d
 /*************************************** Spline<1> ****************************************/
 
 
-Spline<1>::Spline(const double a, const double b, const int n)
+mcbs::Spline<1>::Spline(const double a, const double b, const int n)
 :a_(a), b_(b), n_(n), h_((b-a)/n) {
 #ifdef LOG_SPLINE
   std::cout << " Creating Spline<1> n_" << n_ << std::endl;
@@ -287,7 +289,7 @@ Spline<1>::Spline(const double a, const double b, const int n)
 #endif 
 }
 
-Spline<1>::Spline(const std::vector<double>& a, const std::vector<double>& b, const std::vector<int>& n) 
+mcbs::Spline<1>::Spline(const std::vector<double>& a, const std::vector<double>& b, const std::vector<int>& n) 
 :a_(a[a.size()-1]), b_(b[b.size()-1]), n_(n[n.size()-1]), h_((b_-a_)/n_) {
 #ifdef LOG_SPLINE
   std::cout << " Creating Spline<1> n_:" << n_ << std::endl;
@@ -306,7 +308,7 @@ Spline<1>::Spline(const std::vector<double>& a, const std::vector<double>& b, co
 }
 
 
-void Spline<1>::computeCoefficients(const std::vector<double>& y, std::vector<double>::iterator fromWhereInY) { 
+void mcbs::Spline<1>::computeCoefficients(const std::vector<double>& y, std::vector<double>::iterator fromWhereInY) { 
 
   std::vector<double>::iterator toWhereInY = fromWhereInY + (n_+1); 
   std::vector<double> d;
@@ -346,7 +348,7 @@ void Spline<1>::computeCoefficients(const std::vector<double>& y, std::vector<do
  
 }
 
-void Spline<1>::computeFewCoefficients(const std::vector<double>& y, std::vector<double>::iterator fromWhereInY) {
+void mcbs::Spline<1>::computeFewCoefficients(const std::vector<double>& y, std::vector<double>::iterator fromWhereInY) {
 
   std::vector<double>::iterator toWhereInY = fromWhereInY + (n_+1); 
   std::vector<double> d;
@@ -371,12 +373,12 @@ void Spline<1>::computeFewCoefficients(const std::vector<double>& y, std::vector
 
 }
 
-void Spline<1>::computeInterval(int& l, int& m, const double x) const {
+void mcbs::Spline<1>::computeInterval(int& l, int& m, const double x) const {
   l = floor( ( x - a_ ) / h_ );
   m = std::min( l + 3, n_ + 2);  
 }
 
-double Spline<1>::getValue(const double x) const {
+double mcbs::Spline<1>::getValue(const double x) const {
   int l, m;
   double evaluatedValue = 0;
   if ( (x < a_) || (x > b_) ) {
@@ -390,7 +392,7 @@ double Spline<1>::getValue(const double x) const {
   return evaluatedValue;
 }
 
-double Spline<1>::getFirstDerivative(const double x) {
+double mcbs::Spline<1>::getFirstDerivative(const double x) {
   int l, m;
   double evaluatedValue = 0;
   if ( (x < a_) || (x > b_) ) {

@@ -30,8 +30,8 @@ using std::string;
 using std::vector;
 #include <stdlib.h>
 
-#include "../src/Spline.h"
-#include "../src/Spline.cpp"
+#include "../SplineSrc/include/mcbs/Spline.h"
+#include "../SplineSrc/include/mcbs/Spline.cpp"
 #include "mex.h"
 
 
