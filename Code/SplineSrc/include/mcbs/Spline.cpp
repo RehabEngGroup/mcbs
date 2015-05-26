@@ -90,7 +90,7 @@ void mcbs::Spline<dim>::computeCoefficients(std::vector<double>& y, std::vector<
   c_.clear();
   if (!c_.empty()) {
     std::cout << " Should be empty!!!\n"; 
-    exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE); //TODO remove this
   }
   int sizeOfC = 1;
   for (int i = 0; i < dim; ++i)
@@ -144,8 +144,7 @@ double mcbs::Spline<dim>::getValue(const std::vector<double>& x) const {
   std::vector<int> l(dim);
   std::vector<int> m(dim);
   if (!checkValues(x)) {
-    std::cout << "Values x are out of boundaries\n";
-    exit(EXIT_FAILURE);
+    throw x_out_of_bounds();
   }
   
   
@@ -204,8 +203,7 @@ double mcbs::Spline<dim>::getFirstDerivative(const std::vector<double>& x, const
   std::vector<int> l(dim);
   std::vector<int> m(dim);
   if (!checkValues(x)) {
-    std::cout << "Values x are out of boundaries\n";
-    exit(EXIT_FAILURE);
+    throw x_out_of_bounds();
   }
   
   computeInterval(l, m, x);
@@ -382,8 +380,7 @@ double mcbs::Spline<1>::getValue(const double x) const {
   int l, m;
   double evaluatedValue = 0;
   if ( (x < a_) || (x > b_) ) {
-    std::cout << "Value " << x << " out of boundaries\n";
-    exit(EXIT_FAILURE);
+    throw x_out_of_bounds();
   }
   computeInterval(l, m, x);
   for (int i = l; i <=m; ++i) {
@@ -396,8 +393,7 @@ double mcbs::Spline<1>::getFirstDerivative(const double x) {
   int l, m;
   double evaluatedValue = 0;
   if ( (x < a_) || (x > b_) ) {
-    std::cout << "Value " << x << " out of boundaries\n";
-    exit(EXIT_FAILURE);
+    throw x_out_of_bounds();
   }
   
   computeInterval(l, m, x);
