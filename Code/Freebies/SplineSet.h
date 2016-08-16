@@ -44,9 +44,14 @@ public:
                        const std::vector< std::string >& musclesConnectedToDofs, 
                        const std::vector< double >& angleCombinations,
                        std::vector <double>& maValues);
-    void evalLmt( const std::string& outputDir, const std::vector< std::vector< double > >& angleCombinations ); 
+    void getMaDerivative(const std::string& dofName,
+                       const std::vector< std::string >& musclesConnectedToDofs,
+                       const std::vector< double >& angleCombinations,
+                       std::vector <double>& maDerivativeValues);
+    void evalLmt( const std::string& outputDir, const std::vector< std::vector< double > >& angleCombinations );
     void evalMa(const std::string& outputDir, const std::map< std::string, std::vector< std::string > >& musclesConnectedToDofs, const std::vector< std::vector< double > >& angleCombinations  );
-  
+    void evalMaDerivative(const std::string& outputDir, const std::map< std::string, std::vector< std::string > >& musclesConnectedToDofs, const std::vector< std::vector< double > >& angleCombinations  );
+
 private:
     std::vector< mcbs::Spline<N_DOF> >  splines_;
     std::vector< std::string >    dofNames_;

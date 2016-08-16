@@ -88,6 +88,7 @@ class Spline {
     void computeCoefficients(std::vector<double>& y, std::vector<double>::iterator fromWhereInY);
     double getValue(const std::vector<double>& x) const;
     double getFirstDerivative(const std::vector<double>& x, const int dimDerivative); 
+    double getSecondDerivative(const std::vector<double>& x, const int dimDerivative);
     std::vector<double>& getCoefficients() { return c_; }
     void setCoefficients(const std::vector<double>& coefficients) { c_ = coefficients; }
     

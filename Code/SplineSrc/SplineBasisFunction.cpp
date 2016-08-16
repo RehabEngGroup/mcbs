@@ -39,4 +39,12 @@ double mcbs::SplineBasisFunction::getFirstDerivative(double x, int k, double a, 
                  else return 0;
 }
 
+double mcbs::SplineBasisFunction::getSecondDerivative(double x, int k, double a, double h) {
+  double t = ( ( (x - a) / h ) - (k - 1) );
+  if ( (t <= 2) && (t >= 1) )                  return 3*(4-2*t)/(h*h);
+  else if ( (t < 1) && (t >= 0) )              return (-12+18*t)/(h*h);
+       else if ( (t < 0) && ( t >= -1) )       return (-12-18*t)/(h*h);
+            else if ( (t < -1) && (t >= -2) )  return 3*(4+t*2)/(h*h);
+                 else return 0;
+}
 

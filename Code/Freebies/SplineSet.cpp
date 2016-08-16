@@ -320,6 +320,49 @@ void SplineSet::getMa( const string& dofName,
   
 }
 
+void SplineSet::getMaDerivative( const string& dofName,
+                       const vector< string >& musclesConnectedToDofs,
+                       const vector< double >& angleCombinations,
+                       vector <double>& maDerivativeValues  ) {
+
+  bool found = false;
+  int k = 0;
+  int dofIndex;
+  while ((!found) && (k < dofNames_.size()) ) {
+    if (dofName == dofNames_.at(k)) {
+      dofIndex = k;
+      found = true;
+    }
+    k++;
+  }
+
+  if (!found) {
+    cout << "ERROR: " << dofName << " not found\n";
+    exit(EXIT_FAILURE); //TODO is exit appropriate?
+  }
+
+  maDerivativeValues.resize(musclesConnectedToDofs.size());
+  for (unsigned int i = 0; i < musclesConnectedToDofs.size(); ++i) {
+    vector<string>::iterator iter = find(muscleNames_.begin(), muscleNames_.end(), musclesConnectedToDofs.at(i));
+    if (iter == muscleNames_.end()) {
+      cout << "something went wrong.. muscle not found in Splines \n";
+      exit(EXIT_FAILURE); //TODO is exit appropriate?
+    }
+    size_t splineNum = std::distance(muscleNames_.begin(), iter);
+
+    try
+    {
+        maDerivativeValues.at(i) = -splines_[splineNum].getSecondDerivative(angleCombinations,dofIndex);
+    }
+    catch (mcbs::x_out_of_bounds& e)
+    {
+        throw e;
+    }
+  }
+
+}
+
+
 void SplineSet::evalMa(const string& outputDir, const  map<string, vector<string> >& musclesConnectedToDofs, const vector< vector< double > >& angleCombinations  ) {
   
   
@@ -372,6 +415,60 @@ void SplineSet::evalMa(const string& outputDir, const  map<string, vector<string
   outputDataFile.close();
   }
   
+}
+
+void SplineSet::evalMaDerivative(const string& outputDir, const  map<string, vector<string> >& musclesConnectedToDofs, const vector< vector< double > >& angleCombinations  ) {
+
+
+  const int DIGIT_NUM = 8;
+  const int NUMBER_DIGIT_OUTPUT = 8;
+
+
+
+  // for all the degrees of freedom in the map
+  for ( map<string, vector<string> >::const_iterator dofMusclesIT = musclesConnectedToDofs.begin(); dofMusclesIT!= musclesConnectedToDofs.end() ; ++dofMusclesIT) {
+    vector<string>::iterator dofIt=find(dofNames_.begin(), dofNames_.end(), dofMusclesIT->first);
+    if ( dofIt==dofNames_.end() ) {
+      cout << "ERROR: dofsNames differ\n";
+      exit(EXIT_FAILURE);
+    }
+    size_t dofIndex=dofIt-dofNames_.begin(); //index for this degree of freedom in our member variables
+
+    // Then open the outputDataFile
+    string outputDataFilename = outputDir +  "Dma_" + dofNames_[dofIndex] + ".out";
+    ofstream outputDataFile(outputDataFilename.c_str());
+    if (!outputDataFile.is_open()) {
+      cout << "ERROR: outputDataFile could not be open\n";
+      exit(EXIT_FAILURE);
+    }
+
+    for (unsigned int i = 0; i < dofMusclesIT->second.size(); ++i)
+      outputDataFile << dofMusclesIT->second.at(i) << "\t";
+    outputDataFile << endl;
+
+
+    double nextValue;
+    vector <size_t> splineNums(dofMusclesIT->second.size());
+    for (unsigned int i = 0; i < dofMusclesIT->second.size(); ++i) {
+         vector<string>::iterator iter = find(muscleNames_.begin(), muscleNames_.end(), dofMusclesIT->second.at(i));
+         if (iter == muscleNames_.end()) {
+           cout << "something went wrong\n";
+           exit(EXIT_FAILURE);
+         }
+        splineNums.at(i)= iter - muscleNames_.begin();
+    }
+
+    for (unsigned int j = 0; j < angleCombinations.size(); ++j) {
+      for (unsigned int i = 0; i < dofMusclesIT->second.size(); ++i) {
+        outputDataFile << std::setprecision(NUMBER_DIGIT_OUTPUT) << std::fixed << -roundIt(splines_[splineNums[i]].getSecondDerivative(angleCombinations.at(j),dofIndex), DIGIT_NUM+2) << "\t";
+
+      }
+      outputDataFile << endl;
+    }
+
+  outputDataFile.close();
+  }
+
 }
 
 vector< string > SplineSet::getDofNames()

@@ -269,6 +269,80 @@ double mcbs::Spline<dim>::getFirstDerivative(const std::vector<double>& x, const
 
 }
 
+
+template< int dim >
+double mcbs::Spline<dim>::getSecondDerivative(const std::vector<double>& x, const int dimDerivative) {
+
+  std::vector<int> l(dim);
+  std::vector<int> m(dim);
+  if (!checkValues(x)) {
+    throw x_out_of_bounds();
+  }
+
+  computeInterval(l, m, x);
+
+  std::vector<int> numberOfIterations(dim);
+  for (int i = 0; i < dim; ++i) {
+    numberOfIterations[i]= (m[i]-l[i]+1);
+  }
+
+  int totIterations = 1;
+  for (int i = 0; i < dim; ++i) {
+    totIterations *= numberOfIterations[i];
+  }
+
+  std::vector<int> index(dim);
+  double evaluatedValue = 0;
+  for (int soFar = 0; soFar < totIterations; ++soFar) {
+    double tot = 0;
+    double mul = totIterations;
+    for (int i = dim-1; i > 0; --i) {
+      mul = mul / numberOfIterations[i];
+      index[i] = ( soFar - tot )/ mul;
+      tot += index[i] * mul;
+    }
+    index[0] = soFar % numberOfIterations[0];
+
+    mul = 1;
+    int cIndex = 0;
+    for (int i = 0; i < dim; ++i) {
+      cIndex += (l[i]+index[i]) * mul;
+      mul = mul * (n_[i]+3);
+    }
+#ifdef LOG_SPLINE
+    std::cout << "Multiply c_[" << cIndex << "]:" << c_[cIndex];
+#endif
+    double currentStep = 1;
+    for (int i = 0; i < dimDerivative; ++i) {
+#ifdef LOG_SPLINE
+      std::cout << "\tx[" << i << "]:" << x[i] << "*" << "u[" << l[i]+index[i] << "]:" << SplineBasisFunction::getValue(x[i], l[i]+index[i], a_[i], h_[i]);
+#endif
+       currentStep *= SplineBasisFunction::getValue(x[i], l[i]+index[i], a_[i], h_[i]);
+
+    }
+
+#ifdef LOG_SPLINE
+    std::cout << "\tdx/dim[" << dimDerivative << "]:" << x[dimDerivative] << "*" << "u[" << l[dimDerivative]+index[dimDerivative] << "]:" << SplineBasisFunction::getValue(x[dimDerivative], l[dimDerivative]+index[dimDerivative], a_[dimDerivative], h_[dimDerivative]);
+#endif
+
+    currentStep *= SplineBasisFunction::getSecondDerivative(x[dimDerivative], l[dimDerivative]+index[dimDerivative], a_[dimDerivative], h_[dimDerivative]);
+
+    for (int i = dimDerivative+1; i < dim; ++i) {
+#ifdef LOG_SPLINE
+      std::cout << "\tx[" << i << "]:" << x[i] << "*" << "u[" << l[i]+index[i] << "]:" << SplineBasisFunction::getValue(x[i], l[i]+index[i], a_[i], h_[i]);
+#endif
+      currentStep *= SplineBasisFunction::getValue(x[i], l[i]+index[i], a_[i], h_[i]);
+    }
+#ifdef LOG_SPLINE
+    std::cout << std::endl;
+#endif
+    evaluatedValue += c_[cIndex] * currentStep;
+  }
+  return evaluatedValue;
+
+}
+
+
 /*************************************** Spline<1> ****************************************/
 
 

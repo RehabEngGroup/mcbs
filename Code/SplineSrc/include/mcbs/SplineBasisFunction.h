@@ -29,6 +29,7 @@ class SplineBasisFunction {
 public:
   static double getValue(double x, int k, double a, double h);
   static double getFirstDerivative(double x, int k, double a, double h);
+  static double getSecondDerivative(double x, int k, double a, double h);
 };
  
 }

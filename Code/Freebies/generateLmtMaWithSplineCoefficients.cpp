@@ -125,7 +125,7 @@ int main(int argc, const char* argv[]) {
 
     splineSet.evalLmt(outputDir, anglesCombinations );
     splineSet.evalMa(outputDir, musclesConnectedToDofs, anglesCombinations  );
-    
+    splineSet.evalMaDerivative(outputDir, musclesConnectedToDofs, anglesCombinations);
     exit(EXIT_SUCCESS);
 } 
 
