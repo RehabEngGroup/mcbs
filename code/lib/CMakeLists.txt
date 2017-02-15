@@ -1,0 +1,3 @@
+add_subdirectory(Spline)
+add_subdirectory(SplineSetHelper)
+add_subdirectory(LmtMaFromOpenSim)
