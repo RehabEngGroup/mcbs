@@ -1,35 +1,23 @@
-# Freebies :)
+# Examples
 
-Start working with MCBS library can be a little tricky: everything
-is in C++ and we love efficient solutions that sometimes are too nerdy :)
-In the first release of the library, we included a couple of test programs
-(in matlab and C++). They are great and still included in this distribution
-but they can be a little difficult to deal with...
+Most of the applications of MCBS in biomechanics go through the following steps:
 
-With this new release, we have included several freebies.
-They are our presents for people that want to use MCBS but need solutions
-ready to be used.
+Preparation:
+  - 1. Compute musculotendon length (L<sub>mt</sub>, or Lmt) values on a grid of dof configurations
+  - 2. Compute coefficients for splines that interpolate values at point 1.
 
-Please help us in increasing the number of freebies in this directory:
-either send us your software if you think that it can be useful for other
-developers, or send us ideas about new freebies that you would like to
-be included.
+Execution:
+  - 3. Reload the coefficients to compute Lmt and moment arm (MA) values for a set of dof configurations
 
-Now, sit down and enjoy...
-
-## Three little programs cover most of your needs ##
-Most of the applications of MCBS goes through the following three steps:
-
-* Before:
-  1. Compute musculotendon lenght values on a grid of dof configurations
-  2. Compute coefficients for splines that interpolate values at point 1.
-  Compute coefficients for splines to interpolate the lmt values
-* After:
-  3. Reload the coefficients to compute lmt and ma values for a set of dof configurations
+Optionally, for testing only:
+  - 4. Compute Lmt and MA for the same dof configurations as point 3.
 
 For each step, you have a program ready to be used in this directory.
+In [src](../src) you can find a (slightly more sophisticated) program _osimSpliner_ than combines the first two steps.
+Please __note__ that the programs for steps 1 and 4 are __only__ created if an OpenSim installation is found in your system.
 
 ### 1. generateLmtGridWithOpenSim ###
+
 The generation of Lmt values is based on the OpenSim tool.
 
 How to Run:
@@ -37,21 +25,21 @@ How to Run:
     generateLmtGridWithOpenSim inputDirectory outputDirectory
 
 The __inputDirectory__ must include the following files:
-* _model.osim_: a scaled model of the subject in OpenSim format
-* _muscle.in_: list of muscles whose lmt values will be computed
+* _model.osim_: a model of the subject in OpenSim format
+* _muscles.in_: list of muscles (present in model.osim) for which Lmt values will be computed (one muscle per line)
 * _dofAngles.cfg_: dof configurations
 
 An example of a _dofAngles.cfg_ file follows:
 
     ndof 4
-    R_knee_fe       -65     10      9
-    R_hip_aa        -35     0       9
-    R_hip_fe        -15     50      9
-    R_hip_rot       -50     -10     9
+    ankle_angle_l -0.5 0.3 9
+    knee_angle_l  -1.1 0.2 9
+    hip_adduction_l -0.1 0.15 9
+    hip_flexion_l -0.4 0.5 9
 
-The first line define the number of degrees of freedom.
-For each degree of freedom a line in the file describe:
-* name of the degree
+The first line defines the number of degrees of freedom.
+For each degree of freedom a line in the file describes:
+* name of the degree (should be present in model.osim)
 * minimum value
 * maximum value
 * number of intervals
@@ -59,20 +47,22 @@ For each degree of freedom a line in the file describe:
 The execution of the program produces a _lmt.in_ file in the __outputDirectory__.
 An example of a _lmt.in_ file is:
 
-    R_knee_fe -65 10 9
-    R_hip_aa -35 0 9
-    R_hip_fe -15 50 9
-    R_hip_rot -50 -10 9
-    addbrev_r addlong_r addmag1_r addmag2_r addmag3_r ....
-    0.161533        0.248868        0.145215        0.222197       ...
-    ...
+    ndof 4
+    ankle_angle_l -0.5 0.3 9
+    knee_angle_l -1.1 0.2 9
+    hip_adduction_l -0.1 0.15 9
+    hip_flexion_l -0.4 0.5 9
+    bifemlh_l   bifemsh_l   lat_gas_l   med_gas_l
+    0.367802    0.212479    0.400292    0.404358
 
-The first four lines, reproduce the information from _dofAngles.cfg_
+The first five lines reproduce the information from _dofAngles.cfg_
 The fifth line is the list of muscles from _muscle.in_
-Then, for each dof configuration, a line reports the lmt values for all the muscles.
+Then, for each dof configuration, a line reports the Lmt values for all the muscles.
 
 ### 2. computeCoefficients ###
+
 The generation of the spline coefficients is based on the algorithm described in:
+
 _M. Sartori, M. Reggiani, A. J. van den Bogert, and D. G. Lloyd. Estimation of musculoten-
 don kinematics in large musculoskeletal models using multidimensional B-splines. Journal of
 Biomechanics, 45(3):595-601, February 2012._
@@ -90,12 +80,13 @@ After the execution, the following files will be created in the __outputDirector
 * for each muscle, a binary file storing the coefficients of the interpolating spline
 * a _dofAngles.cfg_ (required for step 3)
 
-### 3. compute lmt and ma for a set of dof configurations ###
+### 3. generateLmtMaWithSplineCoefficients ###
+
 The third program:
 
-* setups a set of splines based on the coefficients computed at step 2.
-* read a list of dof configurations (angles.in)
-* for each dof configuration compute musculotendon lenghts and moment arms
+* sets up a set of splines based on the coefficients computed at step 2.
+* reads a list of dof configurations (angles.in)
+* for each dof configuration, computes musculotendon lenghts and moment arms
 
 How to Run:
 
@@ -105,48 +96,58 @@ The __coeffDir__ must include the files generated at step 2.
 
 The __inputDirectory__ includes the following files:
 
-* _muscle.in_: the list of muscles whose lmt will be computed
-* _dofs.in_: for each dof, the list of muscles contributing to its torque
+* _muscles.in_: the list of muscles (one per line) for which Lmt and Ma will be computed. Each muscle is followed by the list of dofs that the muscle acts upon (this information is used to output only relevant muscles in MA files)
 * _angles.in_: list of dof configurations
 
-An example of _dofs.in_ is the following:
+An example of _muscles.in_ is the following:
 
-    R_knee_fe bicfemlh_r  bicfemsh_r  gaslat_r  gasmed_r  gra_r  recfem_r  sar_r  semimem_r  semiten_r  tfl_r  vasint_r  vaslat_r  vasmed_r
-    R_hip_aa addbrev_r  addlong_r  addmag1_r  addmag2_r  addmag3_r  bicfemlh_r  gmax1_r  gmax2_r  gmax3_r  gmed1_r  gmed2_r  gmed3_r  gmin1_r  gmin2_r  gmin3_r  gra_r  illiacus_r  psoas_r  recfem_r  sar_r  semimem_r  semiten_r  tfl_r
-    R_hip_fe addbrev_r  addlong_r  addmag1_r  addmag2_r  addmag3_r  bicfemlh_r  gmax1_r  gmax2_r  gmax3_r  gmed1_r  gmed2_r  gmed3_r  gmin1_r  gmin2_r  gmin3_r  gra_r  illiacus_r  psoas_r  recfem_r  sar_r  semimem_r  semiten_r  tfl_r
-    R_hip_rot addbrev_r addlong_r addmag1_r addmag2_r addmag3_r bicfemlh_r gmax1_r gmax2_r gmax3_r gmed1_r gmed2_r gmed3_r gmin1_r gmin2_r gmin3_r gra_r illiacus_r psoas_r recfem_r sar_r semimem_r semiten_r tfl_r
-
-each line includes the name of the degree of freedom followed by
-the list of muscle names.
-
-An example of _angles.in_ is:
-    10000
-    -50 -15 -35 -65
-    -50 -15 -35 -56.6667
-    -50 -15 -35 -48.3333
-    -50 -15 -35 -40
+    bifemlh_l knee_angle_l hip_adduction_l hip_flexion_l
+    bifemsh_l knee_angle_l
+    lat_gas_l knee_angle_l ankle_angle_l
+    med_gas_l knee_angle_l ankle_angle_l
+    per_brev_l ankle_angle_l
     ...
 
-First line includes the number of configurations, then each line
-includes the dof values for each degree of freedom in the following order:
+An example of _angles.in_ is:
 
-    R_hip_rot R_hip_fe R_hip_aa R_knee_fe
+    hip_flexion_l    hip_adduction_l    knee_angle_l    ankle_angle_l
+    -0.289026524    0.046774824    -0.143116999    0.1712168
+    -0.29356438    0.033859387    -0.197047673    0.144164196
+    -0.288502925    0.01727876    -0.265115513    0.096342175
+    -0.268780705    -0.003316126    -0.35203291    0.019373155
+    -0.234572251    -0.025830873    -0.454832803    -0.076096355
+    -0.185877565    -0.046949357    -0.570199067    -0.169820536
+    -0.124791042    -0.063180919    -0.691150384    -0.233350521
+    -0.055152404    -0.071558499    -0.805643983    -0.245567826
+    ...
+
+The first line includes the names of the degrees of freedom, then each line
+represents the corresponding values for a configuration.
 
 After the execution, the following files will be created in the __outputDirectory__:
 
-* lmt.out with the musculotendon lenght of the muscle in _muscle.in_ for each configuration in _angles.in_
-* a ma*.out file for each degree of freedom with the moment arm of the muscle contributing to the torque at the joint.
+* _lmt.out_ with the musculotendon lenght of the muscle in _muscle.in_ for each configuration in _angles.in_
+* a _ma*.out_ file for each degree of freedom with the moment arm of the muscle contributing to the torque at the joint.
 
-### Simple set of data to play  ###
-We have included a set of data in the release to test the previous three programs.
-In the _Data/DataForFreebies_ there are three directories with the same names of
-the three programs. In each directory you will find an Input and Output directory.
-You can use this data to try the previous procedures.
+## 4. generateLmtMaEvalGridWithOpenSim ##
 
+This testing program provides the same output as the third program, but computes Lmt and MA through OpenSim instead of using the splines. This allows to compare the results of the OpenSim and MCBS approaches.
 
-## A program to test spline behavior ##
-Another program included in the directory compute Lmt and Ma with the OpenSim tools.
-The objective is to build exactly the same data and compare the results of OpenSim
-and Spline approaches.
+How to Run:
 
-So far, we have implemented only the Lmt computation... stay tuned
+    generateLmtMaEvalGridWithOpenSim inputDirectory outputDirectory
+
+The __inputDirectory__ includes the following files:
+
+* _muscles.in_: the list of muscles (one per line) for which Lmt and Ma will be computed, as in program 3.
+* _model.osim_: a model of the subject in OpenSim format
+* _angles.in_: list of dof configurations, as in program 3.
+
+### Simple set of data to play with ###
+
+We have included a set of data to test all these programs.
+In the [exampleData](../../data/exampleData) folder there are four directories with the same names as
+the programs. In each directory you will find an Input and Output directory.
+You can use these data to try out the previous procedures.
+
+On UNIX systems, you can also use the runExamples.sh script to perform the four steps. You can then use the [Python scripts](../scripts) to compare the results obtained with programs 3 and 4.
